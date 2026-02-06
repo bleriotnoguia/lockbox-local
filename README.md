@@ -1,6 +1,8 @@
 # Lockbox Local v2.0
 
-Une application desktop sécurisée de stockage d'informations sensibles avec délai d'accès, construite avec **React 19**, **TypeScript** et **Tauri 2.0**.
+> [🇫🇷 Version française](README.fr.md) | [🇬🇧 English version](README.md)
+
+A secure desktop application for storing sensitive information with access delay, built with **React 19**, **TypeScript** and **Tauri 2.0**.
 
 ![Lockbox Local](https://img.shields.io/badge/version-2.0.0-blue)
 ![Tauri](https://img.shields.io/badge/Tauri-2.0-blue)
@@ -8,26 +10,26 @@ Une application desktop sécurisée de stockage d'informations sensibles avec d�
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)
 
-## Fonctionnalités
+## Features
 
-- **Stockage sécurisé** - Chiffrement AES-256-GCM de bout en bout
-- **Délai d'accès** - Temps d'attente configurable avant de pouvoir accéder au contenu
-- **Reverrouillage automatique** - Les lockboxes se reverrouillent après une période définie
-- **Mot de passe maître** - Protection globale de l'application
-- **Catégories** - Organisation de vos lockboxes par catégorie
-- **Import/Export** - Sauvegarde et restauration au format JSON
-- **Thème sombre/clair** - Interface adaptative selon vos préférences
-- **Cross-platform** - Fonctionne sur Windows, macOS et Linux
+- **Secure storage** - End-to-end AES-256-GCM encryption
+- **Access delay** - Configurable waiting time before accessing content
+- **Auto re-lock** - Lockboxes automatically re-lock after a defined period
+- **Master password** - Global application protection
+- **Categories** - Organize your lockboxes by category
+- **Import/Export** - Backup and restore in JSON format
+- **Dark/Light theme** - Adaptive interface according to your preferences
+- **Cross-platform** - Works on Windows, macOS and Linux
 
-## Prérequis
+## Prerequisites
 
-### Pour le développement
+### For development
 
 - [Node.js](https://nodejs.org/) (v20+)
 - [Rust](https://rustup.rs/) (stable 1.77+)
 - [Tauri CLI 2.0](https://v2.tauri.app/)
 
-### Installation des prérequis sur Ubuntu
+### Installing prerequisites on Ubuntu
 
 ```bash
 # Node.js (via nvm)
@@ -40,7 +42,7 @@ nvm use 18
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 source ~/.cargo/env
 
-# Dépendances système pour Tauri
+# System dependencies for Tauri
 sudo apt update
 sudo apt install -y libwebkit2gtk-4.0-dev \
     build-essential \
@@ -55,145 +57,145 @@ sudo apt install -y libwebkit2gtk-4.0-dev \
 ## Installation
 
 ```bash
-# Cloner le projet (si nécessaire)
+# Clone the project (if needed)
 cd new-lockbox-local
 
-# Installer les dépendances npm
+# Install npm dependencies
 npm install
 
-# Lancer en mode développement
+# Run in development mode
 npm run tauri:dev
 
-# Compiler pour la production
+# Build for production
 npm run tauri:build
 ```
 
-## Structure du projet
+## Project Structure
 
 ```
 new-lockbox-local/
 ├── src/                          # Frontend React/TypeScript
-│   ├── components/               # Composants React
-│   │   ├── ui/                   # Composants UI réutilisables
-│   │   ├── LockboxCard.tsx       # Carte de lockbox
-│   │   ├── LockboxList.tsx       # Liste des lockboxes
-│   │   ├── LockboxDetail.tsx     # Détail d'une lockbox
-│   │   ├── CreateLockboxModal.tsx# Modal de création
-│   │   ├── Header.tsx            # En-tête
-│   │   ├── Sidebar.tsx           # Barre latérale
-│   │   └── LoginScreen.tsx       # Écran de connexion
-│   ├── hooks/                    # Hooks personnalisés
-│   │   ├── useCountdown.ts       # Compteur à rebours
-│   │   ├── useLockboxStatus.ts   # Statut des lockboxes
+│   ├── components/               # React components
+│   │   ├── ui/                   # Reusable UI components
+│   │   ├── LockboxCard.tsx       # Lockbox card
+│   │   ├── LockboxList.tsx       # Lockbox list
+│   │   ├── LockboxDetail.tsx     # Lockbox detail
+│   │   ├── CreateLockboxModal.tsx# Creation modal
+│   │   ├── Header.tsx            # Header
+│   │   ├── Sidebar.tsx           # Sidebar
+│   │   └── LoginScreen.tsx       # Login screen
+│   ├── hooks/                    # Custom hooks
+│   │   ├── useCountdown.ts       # Countdown timer
+│   │   ├── useLockboxStatus.ts   # Lockbox status
 │   │   └── useExportImport.ts    # Import/Export
-│   ├── store/                    # État global (Zustand)
-│   │   ├── lockboxStore.ts       # Store des lockboxes
-│   │   ├── authStore.ts          # Store d'authentification
-│   │   └── themeStore.ts         # Store du thème
-│   ├── types/                    # Types TypeScript
+│   ├── store/                    # Global state (Zustand)
+│   │   ├── lockboxStore.ts       # Lockbox store
+│   │   ├── authStore.ts          # Authentication store
+│   │   └── themeStore.ts         # Theme store
+│   ├── types/                    # TypeScript types
 │   ├── styles/                   # CSS/Tailwind
-│   ├── App.tsx                   # Composant principal
-│   └── main.tsx                  # Point d'entrée
+│   ├── App.tsx                   # Main component
+│   └── main.tsx                  # Entry point
 │
 ├── src-tauri/                    # Backend Rust/Tauri
 │   ├── src/
-│   │   ├── main.rs               # Point d'entrée Tauri
-│   │   ├── db.rs                 # Opérations SQLite
-│   │   ├── crypto.rs             # Chiffrement AES
-│   │   └── commands.rs           # Commandes Tauri
-│   ├── Cargo.toml                # Dépendances Rust
-│   └── tauri.conf.json           # Configuration Tauri
+│   │   ├── main.rs               # Tauri entry point
+│   │   ├── db.rs                 # SQLite operations
+│   │   ├── crypto.rs             # AES encryption
+│   │   └── commands.rs           # Tauri commands
+│   ├── Cargo.toml                # Rust dependencies
+│   └── tauri.conf.json           # Tauri configuration
 │
-├── package.json                  # Dépendances npm
-├── vite.config.ts                # Configuration Vite
-├── tailwind.config.js            # Configuration Tailwind
-└── tsconfig.json                 # Configuration TypeScript
+├── package.json                  # npm dependencies
+├── vite.config.ts                # Vite configuration
+├── tailwind.config.js            # Tailwind configuration
+└── tsconfig.json                 # TypeScript configuration
 ```
 
-## Utilisation
+## Usage
 
-### Premier lancement
+### First launch
 
-1. Au premier lancement, créez un **mot de passe maître**
-2. Ce mot de passe chiffre toutes vos données
-3. **Important** : Ce mot de passe ne peut pas être récupéré !
+1. On first launch, create a **master password**
+2. This password encrypts all your data
+3. **Important**: This password cannot be recovered!
 
-### Créer une Lockbox
+### Create a Lockbox
 
-1. Cliquez sur "Nouvelle Lockbox"
-2. Entrez un nom et le contenu à protéger
-3. Configurez le délai de déverrouillage (temps d'attente)
-4. Configurez le délai de reverrouillage (durée d'accès)
-5. Optionnel : Choisissez une catégorie
+1. Click on "New Lockbox"
+2. Enter a name and the content to protect
+3. Configure the unlock delay (waiting time)
+4. Configure the re-lock delay (access duration)
+5. Optional: Choose a category
 
-### Déverrouiller une Lockbox
+### Unlock a Lockbox
 
-1. Sélectionnez la lockbox
-2. Cliquez sur "Déverrouiller"
-3. Attendez que le compte à rebours se termine
-4. Le contenu sera visible pendant la durée configurée
+1. Select the lockbox
+2. Click on "Unlock"
+3. Wait for the countdown to finish
+4. Content will be visible for the configured duration
 
 ### Import/Export
 
-- **Export** : Cliquez sur l'icône de téléchargement dans l'en-tête
-- **Import** : Cliquez sur l'icône d'upload et sélectionnez un fichier `.json`
+- **Export**: Click on the download icon in the header
+- **Import**: Click on the upload icon and select a `.json` file
 
-## Sécurité
+## Security
 
-### Chiffrement
+### Encryption
 
-- **Algorithme** : AES-256-GCM
-- **Dérivation de clé** : PBKDF2 avec 100 000 itérations
-- **Sel** : Généré aléatoirement pour chaque contenu
+- **Algorithm**: AES-256-GCM
+- **Key derivation**: PBKDF2 with 100,000 iterations
+- **Salt**: Randomly generated for each content
 
-### Stockage
+### Storage
 
-- Base de données SQLite locale
-- Aucune donnée envoyée sur Internet
-- Toutes les données restent sur votre machine
+- Local SQLite database
+- No data sent over the Internet
+- All data remains on your machine
 
-## Développement
+## Development
 
-### Scripts disponibles
+### Available scripts
 
 ```bash
-# Développement
-npm run dev          # Lance Vite (frontend uniquement)
-npm run tauri:dev    # Lance Tauri + Vite
+# Development
+npm run dev          # Runs Vite (frontend only)
+npm run tauri:dev    # Runs Tauri + Vite
 
 # Build
-npm run build        # Build le frontend
-npm run tauri:build  # Build l'application complète
+npm run build        # Builds the frontend
+npm run tauri:build  # Builds the complete application
 
 # Lint
-npm run lint         # Vérifie le code TypeScript
+npm run lint         # Checks TypeScript code
 ```
 
 ### Tests
 
 ```bash
-# Tests Rust
+# Rust tests
 cd src-tauri
 cargo test
 ```
 
-## Comparaison avec la v1 (Java)
+## Comparison with v1 (Java)
 
-| Fonctionnalité | v1 (Java) | v2 (Tauri) |
-|----------------|-----------|------------|
-| Taille du bundle | ~100 MB | ~15 MB |
+| Feature | v1 (Java) | v2 (Tauri) |
+|---------|-----------|------------|
+| Bundle size | ~100 MB | ~15 MB |
 | RAM | ~150 MB | ~50 MB |
-| Chiffrement | Non | AES-256-GCM |
-| Mot de passe maître | Non | Oui |
-| Catégories | Non | Oui |
-| Recherche | Non | Oui |
-| Thème sombre | Non | Oui |
-| Format d'export | .lbf (texte) | .json |
+| Encryption | No | AES-256-GCM |
+| Master password | No | Yes |
+| Categories | No | Yes |
+| Search | No | Yes |
+| Dark theme | No | Yes |
+| Export format | .lbf (text) | .json |
 
-## Licence
+## License
 
-MIT License - Voir [LICENSE](LICENSE) pour plus de détails.
+MIT License - See [LICENSE](LICENSE) for more details.
 
-## Contribuer
+## Contributing
 
-Les contributions sont les bienvenues ! N'hésitez pas à ouvrir une issue ou une pull request.
+Contributions are welcome! Feel free to open an issue or a pull request.
