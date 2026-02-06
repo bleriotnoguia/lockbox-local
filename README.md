@@ -10,6 +10,24 @@ A secure desktop application for storing sensitive information with access delay
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)
 
+<p align="center">
+  <img src="public/screenshot.png" alt="Lockbox Local Screenshot" width="800" />
+</p>
+
+## Background & Motivation
+
+Lockbox Local is inspired by [Pluckeye Lockbox](https://lockbox.pluckeye.net/help), a web application that lets you store information in "boxes" which can only be accessed after a delay period. This is useful if you need to hide a password from yourself, for help with **self-control**.
+
+Pluckeye Lockbox has been around for years, but it's a free service run by a single person. As the author warns:
+
+> *"[Pluckeye Lockbox boxes] threaten to destruct mainly so that users do not assume the service will be around forever. You should not assume your data will be kept longer than 1 year, because the service is 100% free and run by one person."* — [(Source)](https://www.reddit.com/r/pluckeye/comments/mvyvmw/lockbox_i_typed_never_into_the_self_destruct_date/)
+
+If you stored a critical password in Pluckeye Lockbox and the server crashed with all data lost, you'd be permanently locked out. **Lockbox Local solves this** by keeping everything on your own machine — no cloud dependency, no risk of service shutdown, and **boxes never self-destruct**.
+
+### What changed from [v1 (Java)](https://github.com/japierreSWE/Lockbox_Local)?
+
+The original Lockbox Local was built with Java and SQLite. This **v2** is a complete rewrite using modern technologies (Tauri 2.0 + React 19 + Rust), bringing AES-256-GCM encryption, a master password, categories, search, theming, and a much smaller footprint (see [comparison table](#comparison-with-v1-java) below).
+
 ## Features
 
 - **Secure storage** - End-to-end AES-256-GCM encryption

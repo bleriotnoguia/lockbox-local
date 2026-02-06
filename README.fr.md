@@ -10,6 +10,24 @@ Une application desktop sécurisée de stockage d'informations sensibles avec d�
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)
 
+<p align="center">
+  <img src="public/screenshot.png" alt="Capture d'écran Lockbox Local" width="800" />
+</p>
+
+## Contexte et motivation
+
+Lockbox Local est inspiré de [Pluckeye Lockbox](https://lockbox.pluckeye.net/help), une application web qui permet de stocker des informations dans des "boîtes" accessibles uniquement après un délai. C'est utile si vous avez besoin de cacher un mot de passe à vous-même, pour vous aider avec le **contrôle de soi**.
+
+Pluckeye Lockbox existe depuis des années, mais c'est un service gratuit géré par une seule personne. Comme l'auteur le prévient :
+
+> *"[Les boîtes Pluckeye Lockbox] menacent de s'autodétruire principalement pour que les utilisateurs ne supposent pas que le service existera pour toujours. Vous ne devriez pas supposer que vos données seront conservées plus d'un an, car le service est 100% gratuit et géré par une seule personne."* — [(Source)](https://www.reddit.com/r/pluckeye/comments/mvyvmw/lockbox_i_typed_never_into_the_self_destruct_date/)
+
+Si vous aviez stocké un mot de passe critique dans Pluckeye Lockbox et que le serveur tombait en panne avec toutes les données perdues, vous seriez définitivement bloqué. **Lockbox Local résout ce problème** en gardant tout sur votre propre machine — aucune dépendance au cloud, aucun risque d'arrêt du service, et **les boîtes ne s'autodétruisent jamais**.
+
+### Quoi de neuf par rapport à la [v1 (Java)](https://github.com/japierreSWE/Lockbox_Local) ?
+
+Le Lockbox Local original était construit avec Java et SQLite. Cette **v2** est une réécriture complète utilisant des technologies modernes (Tauri 2.0 + React 19 + Rust), apportant le chiffrement AES-256-GCM, un mot de passe maître, des catégories, la recherche, les thèmes, et une empreinte bien plus légère (voir le [tableau comparatif](#comparaison-avec-la-v1-java) ci-dessous).
+
 ## Fonctionnalités
 
 - **Stockage sécurisé** - Chiffrement AES-256-GCM de bout en bout
