@@ -1,0 +1,33 @@
+[package]
+name = "lockbox-local"
+version = "2.0.0"
+description = "A secure, delay-based password and information storage application"
+authors = ["Lockbox Team"]
+license = "MIT"
+repository = ""
+edition = "2021"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-dialog = "2"
+tauri-plugin-fs = "2"
+tauri-plugin-notification = "2"
+tauri-plugin-shell = "2"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+rusqlite = { version = "0.32", features = ["bundled"] }
+chrono = { version = "0.4", features = ["serde"] }
+aes-gcm = "0.10"
+base64 = "0.22"
+rand = "0.8"
+sha2 = "0.10"
+pbkdf2 = "0.12"
+hex = "0.4"
+thiserror = "2.0"
+dirs = "5.0"
+
+[features]
+default = []
