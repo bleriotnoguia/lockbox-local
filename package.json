@@ -10,6 +10,8 @@
     "tauri": "tauri",
     "tauri:dev": "tauri dev",
     "tauri:build": "tauri build",
+    "build:linux": "tauri build --target x86_64-unknown-linux-gnu",
+    "build:windows": "tauri build --target x86_64-pc-windows-msvc",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {

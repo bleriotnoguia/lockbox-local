@@ -179,7 +179,178 @@ cd src-tauri
 cargo test
 ```
 
-## Comparison with v1 (Java)
+## Creating Installation Packages
+
+### .deb Package (Ubuntu/Debian)
+
+To create a `.deb` package on Ubuntu, Tauri automatically generates the package during build:
+
+```bash
+# Ensure all dependencies are installed
+sudo apt update
+sudo apt install -y libwebkit2gtk-4.0-dev \
+    build-essential \
+    curl \
+    wget \
+    libssl-dev \
+    libgtk-3-dev \
+    libayatana-appindicator3-dev \
+    librsvg2-dev \
+    patchelf
+
+# Install project dependencies
+npm install
+
+# Build the application (automatically generates .deb)
+npm run tauri:build
+```
+
+The `.deb` package will be generated in:
+```
+src-tauri/target/release/bundle/deb/lockbox-local_2.0.0_amd64.deb
+```
+
+**Installing the .deb package:**
+```bash
+sudo dpkg -i src-tauri/target/release/bundle/deb/lockbox-local_2.0.0_amd64.deb
+
+# If dependencies are missing, install with:
+sudo apt-get install -f
+```
+
+### .exe Package (Windows)
+
+#### Option 1: Build on Windows (Recommended)
+
+On a Windows machine with prerequisites installed:
+
+```bash
+# Install Windows prerequisites
+# - Node.js (v20+)
+# - Rust (via rustup)
+# - Microsoft Visual C++ Build Tools
+
+# Install dependencies
+npm install
+
+# Build the application
+npm run tauri:build
+```
+
+The `.exe` file will be generated in:
+```
+src-tauri/target/release/lockbox-local.exe
+```
+
+An MSI installer will also be created in:
+```
+src-tauri/target/release/bundle/msi/lockbox-local_2.0.0_x64_en-US.msi
+```
+
+#### Option 2: Cross-compilation from Linux (Advanced)
+
+To create an `.exe` from Linux, you can use GitHub Actions or Docker with a Windows environment. Here's an example with GitHub Actions:
+
+Create `.github/workflows/build.yml`:
+
+```yaml
+name: Build Windows/Linux
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Install dependencies
+        run: npm install
+      - name: Build Windows
+        run: npm run tauri:build
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-installer
+          path: src-tauri/target/release/bundle/msi/*.msi
+
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Install system dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y libwebkit2gtk-4.0-dev \
+            build-essential curl wget libssl-dev \
+            libgtk-3-dev libayatana-appindicator3-dev \
+            librsvg2-dev patchelf
+      - name: Install dependencies
+        run: npm install
+      - name: Build Linux
+        run: npm run tauri:build
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-deb
+          path: src-tauri/target/release/bundle/deb/*.deb
+```
+
+### Advanced Package Configuration
+
+To customize package metadata, modify `src-tauri/tauri.conf.json`:
+
+```json
+{
+  "bundle": {
+    "active": true,
+    "targets": ["deb", "msi"],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "deb": {
+      "depends": [],
+      "files": {},
+      "desktopTemplate": null
+    },
+    "windows": {
+      "certificateThumbprint": null,
+      "digestAlgorithm": "sha256",
+      "timestampUrl": ""
+    }
+  }
+}
+```
+
+### npm Scripts for Easier Building
+
+You can add these scripts to `package.json`:
+
+```json
+{
+  "scripts": {
+    "build:linux": "tauri build --target x86_64-unknown-linux-gnu",
+    "build:windows": "tauri build --target x86_64-pc-windows-msvc",
+    "build:all": "npm run build:linux && npm run build:windows"
+  }
+}
+```
+
+## Comparison with [v1 (Java)](https://github.com/japierreSWE/Lockbox_Local)
 
 | Feature | v1 (Java) | v2 (Tauri) |
 |---------|-----------|------------|

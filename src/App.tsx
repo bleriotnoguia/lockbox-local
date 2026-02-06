@@ -16,7 +16,6 @@ export const App: React.FC = () => {
 
   const {
     isAuthenticated,
-    isMasterPasswordSet,
     isLoading: authLoading,
     checkMasterPassword,
   } = useAuthStore();
