@@ -14,6 +14,10 @@ pub struct AppState {
 }
 
 fn main() {
+    // Fix blank window on Linux with certain GPU drivers
+    #[cfg(target_os = "linux")]
+    std::env::set_var("WEBKIT_DISABLE_COMPOSITING_MODE", "1");
+
     let db = Database::new().expect("Failed to initialize database");
     
     tauri::Builder::default()

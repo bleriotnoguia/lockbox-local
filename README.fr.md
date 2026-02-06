@@ -322,19 +322,17 @@ Pour personnaliser les métadonnées des packages, modifiez `src-tauri/tauri.con
       "icons/icon.icns",
       "icons/icon.ico"
     ],
-    "deb": {
-      "depends": [],
-      "files": {},
-      "desktopTemplate": null
-    },
-    "windows": {
-      "certificateThumbprint": null,
-      "digestAlgorithm": "sha256",
-      "timestampUrl": ""
+    "linux": {
+      "deb": {
+        "depends": [],
+        "files": {}
+      }
     }
   }
 }
 ```
+
+> **Note** : Par défaut, Tauri détecte automatiquement les dépendances système nécessaires. Ne spécifiez le champ `depends` que si vous avez besoin d'ajouter des dépendances supplémentaires.
 
 ### Scripts npm pour faciliter le build
 
