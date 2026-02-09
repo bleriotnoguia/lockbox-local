@@ -281,88 +281,11 @@ src-tauri/target/release/bundle/msi/lockbox-local_2.0.0_x64_en-US.msi
 
 #### Option 2: Cross-compilation from Linux (Advanced)
 
-To create an `.exe` from Linux, you can use GitHub Actions or Docker with a Windows environment. Here's an example with GitHub Actions:
-
-Create `.github/workflows/build.yml`:
-
-```yaml
-name: Build Windows/Linux
-
-on:
-  push:
-    tags:
-      - 'v*'
-
-jobs:
-  build-windows:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - uses: dtolnay/rust-toolchain@stable
-      - name: Install dependencies
-        run: npm install
-      - name: Build Windows
-        run: npm run tauri:build
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: windows-installer
-          path: src-tauri/target/release/bundle/msi/*.msi
-
-  build-linux:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - uses: dtolnay/rust-toolchain@stable
-      - name: Install system dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y libwebkit2gtk-4.1-dev \
-            build-essential curl wget libssl-dev \
-            libgtk-3-dev libayatana-appindicator3-dev \
-            librsvg2-dev patchelf
-      - name: Install dependencies
-        run: npm install
-      - name: Build Linux
-        run: npm run tauri:build
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: linux-deb
-          path: src-tauri/target/release/bundle/deb/*.deb
-```
+The project uses GitHub Actions to build Windows, Linux, and macOS and to create releases on tag push. See [`.github/workflows/build.yml`](.github/workflows/build.yml) for the workflow.
 
 ### Advanced Package Configuration
 
-To customize package metadata, modify `src-tauri/tauri.conf.json`:
-
-```json
-{
-  "bundle": {
-    "active": true,
-    "targets": ["deb", "msi"],
-    "icon": [
-      "icons/32x32.png",
-      "icons/128x128.png",
-      "icons/128x128@2x.png",
-      "icons/icon.icns",
-      "icons/icon.ico"
-    ],
-    "linux": {
-      "deb": {
-        "depends": [],
-        "files": {}
-      }
-    }
-  }
-}
-```
+To customize package metadata, edit [`src-tauri/tauri.conf.json`](src-tauri/tauri.conf.json) (see the `bundle` section, and optionally `bundle.linux.deb` or `bundle.windows`).
 
 > **Note**: By default, Tauri automatically detects the required system dependencies. Only specify the `depends` field if you need to add extra dependencies.
 
