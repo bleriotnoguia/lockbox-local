@@ -62,7 +62,7 @@ source ~/.cargo/env
 
 # System dependencies for Tauri
 sudo apt update
-sudo apt install -y libwebkit2gtk-4.0-dev \
+sudo apt install -y libwebkit2gtk-4.1-dev \
     build-essential \
     curl \
     wget \
@@ -206,7 +206,7 @@ To create a `.deb` package on Ubuntu, Tauri automatically generates the package 
 ```bash
 # Ensure all dependencies are installed
 sudo apt update
-sudo apt install -y libwebkit2gtk-4.0-dev \
+sudo apt install -y libwebkit2gtk-4.1-dev \
     build-essential \
     curl \
     wget \
@@ -309,7 +309,7 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt update
-          sudo apt install -y libwebkit2gtk-4.0-dev \
+          sudo apt install -y libwebkit2gtk-4.1-dev \
             build-essential curl wget libssl-dev \
             libgtk-3-dev libayatana-appindicator3-dev \
             librsvg2-dev patchelf
