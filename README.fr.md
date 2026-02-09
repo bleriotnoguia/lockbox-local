@@ -7,12 +7,26 @@ Une application desktop sécurisée de stockage d'informations sensibles avec d�
 ![Lockbox Local](https://img.shields.io/badge/version-2.0.0-blue)
 ![Tauri](https://img.shields.io/badge/Tauri-2.0-blue)
 ![React](https://img.shields.io/badge/React-19-61DAFB)
-![License](https://img.shields.io/badge/license-MIT-green)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)
+[![GitHub Release](https://img.shields.io/github/v/release/bleriotnoguia/lockbox-local)](https://github.com/bleriotnoguia/lockbox-local/releases/latest)
 
 <p align="center">
   <img src="public/screenshot.png" alt="Capture d'écran Lockbox Local" width="800" />
 </p>
+
+## Téléchargement
+
+Téléchargez la dernière version pour votre plateforme :
+
+| Plateforme | Télécharger |
+|------------|-------------|
+| Windows (.msi) | [Télécharger](https://github.com/bleriotnoguia/lockbox-local/releases/latest) |
+| Linux (.deb) | [Télécharger](https://github.com/bleriotnoguia/lockbox-local/releases/latest) |
+| Linux (.AppImage) | [Télécharger](https://github.com/bleriotnoguia/lockbox-local/releases/latest) |
+| macOS (.dmg) | [Télécharger](https://github.com/bleriotnoguia/lockbox-local/releases/latest) |
+
+> Toutes les releases sont disponibles sur la [page des Releases](https://github.com/bleriotnoguia/lockbox-local/releases).
 
 ## Contexte et motivation
 
@@ -381,7 +395,7 @@ Vous pouvez ajouter ces scripts dans `package.json` :
 
 ## Licence
 
-MIT License - Voir [LICENSE](LICENSE) pour plus de détails.
+Ce projet est sous licence MIT - Voir le fichier [LICENSE](LICENSE) pour plus de détails.
 
 ## Contribuer
 
