@@ -13,6 +13,7 @@ import { clsx } from 'clsx';
 import { Button } from './ui/Button';
 import { useLockboxStore, useThemeStore, useAuthStore } from '../store';
 import { useExportImport } from '../hooks';
+import { useTranslation } from '../i18n';
 
 interface HeaderProps {
   onCreateClick: () => void;
@@ -21,6 +22,7 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({ onCreateClick }) => {
   const { searchQuery, setSearchQuery } = useLockboxStore();
   const { theme, setTheme } = useThemeStore();
+  const { t, locale, setLocale } = useTranslation();
   const logout = useAuthStore((state) => state.logout);
   const { exportLockboxes, importLockboxes, isExporting, isImporting } =
     useExportImport();
@@ -28,14 +30,14 @@ export const Header: React.FC<HeaderProps> = ({ onCreateClick }) => {
   const handleImport = async () => {
     const imported = await importLockboxes();
     if (imported.length > 0) {
-      alert(`${imported.length} lockbox(es) importée(s) avec succès !`);
+      alert(t('header.importedCount', { count: imported.length }));
     }
   };
 
   const handleExport = async () => {
     const success = await exportLockboxes();
     if (success) {
-      alert('Export réussi !');
+      alert(t('header.exportSuccess'));
     }
   };
 
@@ -64,7 +66,7 @@ export const Header: React.FC<HeaderProps> = ({ onCreateClick }) => {
               Lockbox Local
             </h1>
             <p className="text-xs text-gray-500 dark:text-gray-400">
-              Stockage sécurisé avec délai
+              {t('header.subtitle')}
             </p>
           </div>
         </div>
@@ -75,7 +77,7 @@ export const Header: React.FC<HeaderProps> = ({ onCreateClick }) => {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <input
               type="text"
-              placeholder="Rechercher..."
+              placeholder={t('header.search')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-2 bg-gray-100 dark:bg-gray-700 border-0 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500"
@@ -90,7 +92,7 @@ export const Header: React.FC<HeaderProps> = ({ onCreateClick }) => {
             onClick={handleImport}
             disabled={isImporting}
             className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
-            title="Importer"
+            title={t('header.import')}
           >
             <Upload className="h-5 w-5" />
           </button>
@@ -98,7 +100,7 @@ export const Header: React.FC<HeaderProps> = ({ onCreateClick }) => {
             onClick={handleExport}
             disabled={isExporting}
             className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
-            title="Exporter"
+            title={t('header.export')}
           >
             <Download className="h-5 w-5" />
           </button>
@@ -113,7 +115,7 @@ export const Header: React.FC<HeaderProps> = ({ onCreateClick }) => {
                   ? 'bg-white dark:bg-gray-600 shadow-sm'
                   : 'hover:bg-gray-200 dark:hover:bg-gray-600'
               )}
-              title="Clair"
+              title={t('header.themeLight')}
             >
               <Sun className="h-4 w-4 text-gray-600 dark:text-gray-300" />
             </button>
@@ -125,7 +127,7 @@ export const Header: React.FC<HeaderProps> = ({ onCreateClick }) => {
                   ? 'bg-white dark:bg-gray-600 shadow-sm'
                   : 'hover:bg-gray-200 dark:hover:bg-gray-600'
               )}
-              title="Système"
+              title={t('header.themeSystem')}
             >
               <Monitor className="h-4 w-4 text-gray-600 dark:text-gray-300" />
             </button>
@@ -143,11 +145,35 @@ export const Header: React.FC<HeaderProps> = ({ onCreateClick }) => {
             </button>
           </div>
 
+          {/* Language switcher */}
+          <div className="flex gap-1 mr-1">
+            <button
+              type="button"
+              onClick={() => setLocale('en')}
+              className={`px-2 py-1 rounded text-sm font-medium transition-colors ${
+                locale === 'en' ? 'bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300' : 'text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-600'
+              }`}
+              title="English"
+            >
+              EN
+            </button>
+            <button
+              type="button"
+              onClick={() => setLocale('fr')}
+              className={`px-2 py-1 rounded text-sm font-medium transition-colors ${
+                locale === 'fr' ? 'bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300' : 'text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-600'
+              }`}
+              title="Français"
+            >
+              FR
+            </button>
+          </div>
+
           {/* Logout */}
           <button
             onClick={logout}
             className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-            title="Déconnexion"
+            title={t('header.logout')}
           >
             <LogOut className="h-5 w-5" />
           </button>
@@ -155,7 +181,7 @@ export const Header: React.FC<HeaderProps> = ({ onCreateClick }) => {
           {/* Create Button */}
           <Button onClick={onCreateClick}>
             <Plus className="h-4 w-4 mr-2" />
-            Nouvelle Lockbox
+            {t('header.newLockbox')}
           </Button>
         </div>
       </div>

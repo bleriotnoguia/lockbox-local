@@ -5,6 +5,7 @@ import { Button } from './ui/Button';
 import { Input, TextArea } from './ui/Input';
 import { Select } from './ui/Select';
 import { useLockboxStore } from '../store';
+import { useTranslation } from '../i18n';
 import { CATEGORIES } from '../types';
 
 interface CreateLockboxModalProps {
@@ -18,6 +19,7 @@ export const CreateLockboxModal: React.FC<CreateLockboxModalProps> = ({
   isOpen,
   onClose,
 }) => {
+  const { t } = useTranslation();
   const [name, setName] = useState('');
   const [content, setContent] = useState('');
   const [category, setCategory] = useState('');
@@ -48,12 +50,12 @@ export const CreateLockboxModal: React.FC<CreateLockboxModalProps> = ({
     setError('');
 
     if (!name.trim()) {
-      setError('Le nom est requis');
+      setError(t('createLockbox.nameRequired'));
       return;
     }
 
     if (!content.trim()) {
-      setError('Le contenu est requis');
+      setError(t('createLockbox.contentRequired'));
       return;
     }
 
@@ -85,19 +87,19 @@ export const CreateLockboxModal: React.FC<CreateLockboxModalProps> = ({
   };
 
   const timeUnitOptions = [
-    { value: 'seconds', label: 'Secondes' },
-    { value: 'minutes', label: 'Minutes' },
-    { value: 'hours', label: 'Heures' },
-    { value: 'days', label: 'Jours' },
+    { value: 'seconds', label: t('timeUnits.seconds') },
+    { value: 'minutes', label: t('timeUnits.minutes') },
+    { value: 'hours', label: t('timeUnits.hours') },
+    { value: 'days', label: t('timeUnits.days') },
   ];
 
   const categoryOptions = [
-    { value: '', label: 'Aucune catégorie' },
-    ...CATEGORIES.map((cat) => ({ value: cat, label: cat })),
+    { value: '', label: t('createLockbox.noCategory') },
+    ...CATEGORIES.map((cat) => ({ value: cat, label: t(`category.${cat}` as 'category.Passwords') })),
   ];
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Nouvelle Lockbox" size="lg">
+    <Modal isOpen={isOpen} onClose={onClose} title={t('createLockbox.title')} size="lg">
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
           <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-red-600 dark:text-red-400 text-sm">
@@ -106,18 +108,18 @@ export const CreateLockboxModal: React.FC<CreateLockboxModalProps> = ({
         )}
 
         <Input
-          label="Nom"
+          label={t('createLockbox.name')}
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Ex: Mot de passe Netflix"
+          placeholder={t('createLockbox.namePlaceholder')}
           required
         />
 
         <TextArea
-          label="Contenu"
+          label={t('createLockbox.content')}
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          placeholder="Entrez le contenu à protéger..."
+          placeholder={t('createLockbox.contentPlaceholder')}
           rows={4}
           required
         />
@@ -132,7 +134,7 @@ export const CreateLockboxModal: React.FC<CreateLockboxModalProps> = ({
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Délai de déverrouillage
+              {t('createLockbox.unlockDelay')}
             </label>
             <div className="flex gap-2">
               <Input
@@ -149,13 +151,13 @@ export const CreateLockboxModal: React.FC<CreateLockboxModalProps> = ({
               />
             </div>
             <p className="mt-1 text-xs text-gray-500">
-              Temps d'attente avant de pouvoir accéder au contenu
+              {t('createLockbox.unlockDelayHint')}
             </p>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Délai de reverrouillage
+              {t('createLockbox.relockDelay')}
             </label>
             <div className="flex gap-2">
               <Input
@@ -172,18 +174,18 @@ export const CreateLockboxModal: React.FC<CreateLockboxModalProps> = ({
               />
             </div>
             <p className="mt-1 text-xs text-gray-500">
-              Temps avant que la lockbox se reverrouille automatiquement
+              {t('createLockbox.relockDelayHint')}
             </p>
           </div>
         </div>
 
         <div className="flex justify-end gap-3 pt-4">
           <Button type="button" variant="secondary" onClick={onClose}>
-            Annuler
+            {t('createLockbox.cancel')}
           </Button>
           <Button type="submit" isLoading={isSubmitting}>
             <Plus className="h-4 w-4 mr-2" />
-            Créer
+            {t('createLockbox.create')}
           </Button>
         </div>
       </form>

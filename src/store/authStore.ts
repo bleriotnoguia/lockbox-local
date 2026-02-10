@@ -55,7 +55,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       if (isValid) {
         set({ isAuthenticated: true, isLoading: false });
       } else {
-        set({ error: "Invalid password", isLoading: false });
+        set({ error: "login.wrongPassword", isLoading: false });
       }
       return isValid;
     } catch (error) {

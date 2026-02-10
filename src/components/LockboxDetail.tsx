@@ -14,16 +14,9 @@ import type { Lockbox } from "../types";
 import { Button } from "./ui/Button";
 import { ConfirmModal } from "./ui/Modal";
 import { useLockboxStore } from "../store";
-import {
-  useCountdown,
-  formatTimeRemaining,
-  formatDelay,
-} from "../hooks/useCountdown";
-import {
-  useLockboxStatus,
-  getStatusColor,
-  getStatusText,
-} from "../hooks/useLockboxStatus";
+import { useCountdown, formatTimeRemaining } from "../hooks/useCountdown";
+import { useLockboxStatus, getStatusColor, getStatusKey } from "../hooks/useLockboxStatus";
+import { useTranslation } from "../i18n";
 
 interface LockboxDetailProps {
   lockbox: Lockbox;
@@ -44,6 +37,7 @@ export const LockboxDetail: React.FC<LockboxDetailProps> = ({
   const { unlockLockbox, relockLockbox, deleteLockbox, fetchLockboxDecrypted } =
     useLockboxStore();
   const status = useLockboxStatus(lockbox);
+  const { t, formatDelay } = useTranslation();
 
   // Fetch decrypted content when lockbox becomes unlocked
   useEffect(() => {
@@ -137,7 +131,7 @@ export const LockboxDetail: React.FC<LockboxDetailProps> = ({
                 getStatusColor(status),
               )}
             >
-              {getStatusText(status)}
+              {t(getStatusKey(status))}
             </span>
           </div>
         </div>
@@ -150,8 +144,8 @@ export const LockboxDetail: React.FC<LockboxDetailProps> = ({
             <Clock className="h-5 w-5 animate-countdown" />
             <span className="font-medium">
               {status === "unlocking"
-                ? "Déverrouillage dans"
-                : "Reverrouillage dans"}
+                ? t("lockboxDetail.unlockIn")
+                : t("lockboxDetail.relockIn")}
             </span>
           </div>
           <p className="text-3xl font-mono font-bold text-primary-600 dark:text-primary-400 mt-2">
@@ -164,14 +158,14 @@ export const LockboxDetail: React.FC<LockboxDetailProps> = ({
       <div className="flex-1 mb-6">
         <div className="flex items-center justify-between mb-2">
           <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-            Contenu
+            {t("lockboxDetail.content")}
           </label>
           {isUnlocked && (
             <div className="flex gap-2">
               <button
                 onClick={() => setShowContent(!showContent)}
                 className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                title={showContent ? "Masquer" : "Afficher"}
+                title={showContent ? t("lockboxDetail.hide") : t("lockboxDetail.show")}
               >
                 {showContent ? (
                   <EyeOff className="h-4 w-4" />
@@ -182,7 +176,7 @@ export const LockboxDetail: React.FC<LockboxDetailProps> = ({
               <button
                 onClick={handleCopy}
                 className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                title="Copier"
+                title={t("lockboxDetail.copy")}
               >
                 {copied ? (
                   <Check className="h-4 w-4 text-green-500" />
@@ -199,7 +193,7 @@ export const LockboxDetail: React.FC<LockboxDetailProps> = ({
             isLoadingContent ? (
               <div className="flex flex-1 min-h-[80px] items-center justify-center text-gray-500 dark:text-gray-400">
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary-500 mr-2" />
-                <span>Déchiffrement...</span>
+                <span>{t("lockboxDetail.decrypting")}</span>
               </div>
             ) : (
               <p
@@ -214,7 +208,7 @@ export const LockboxDetail: React.FC<LockboxDetailProps> = ({
           ) : (
             <div className="flex flex-1 min-h-[80px] items-center justify-center text-gray-500 dark:text-gray-400">
               <Lock className="h-5 w-5 mr-2 shrink-0" />
-              <span>Contenu verrouillé</span>
+              <span>{t("lockboxDetail.contentLocked")}</span>
             </div>
           )}
         </div>
@@ -224,7 +218,7 @@ export const LockboxDetail: React.FC<LockboxDetailProps> = ({
       <div className="grid grid-cols-2 gap-4 mb-6">
         <div className="p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
           <p className="text-xs text-gray-500 dark:text-gray-400">
-            Délai de déverrouillage
+            {t("lockboxDetail.unlockDelay")}
           </p>
           <p className="font-medium text-gray-900 dark:text-white">
             {formatDelay(lockbox.unlock_delay_seconds)}
@@ -232,7 +226,7 @@ export const LockboxDetail: React.FC<LockboxDetailProps> = ({
         </div>
         <div className="p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
           <p className="text-xs text-gray-500 dark:text-gray-400">
-            Délai de reverrouillage
+            {t("lockboxDetail.relockDelay")}
           </p>
           <p className="font-medium text-gray-900 dark:text-white">
             {formatDelay(lockbox.relock_delay_seconds)}
@@ -243,9 +237,9 @@ export const LockboxDetail: React.FC<LockboxDetailProps> = ({
       {/* Category */}
       {lockbox.category && (
         <div className="mb-6 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
-          <p className="text-xs text-gray-500 dark:text-gray-400">Catégorie</p>
-          <p className="font-medium text-gray-900 dark:text-white">
-            {lockbox.category}
+          <p className="text-xs text-gray-500 dark:text-gray-400">{t("lockboxDetail.category")}</p>
+            <p className="font-medium text-gray-900 dark:text-white">
+            {lockbox.category ? t(`category.${lockbox.category}` as 'category.Passwords') : ''}
           </p>
         </div>
       )}
@@ -255,21 +249,21 @@ export const LockboxDetail: React.FC<LockboxDetailProps> = ({
         {status === "locked" && (
           <Button onClick={() => setShowUnlockConfirm(true)} className="flex-1">
             <Unlock className="h-4 w-4 mr-2" />
-            Déverrouiller
+            {t("lockboxDetail.unlock")}
           </Button>
         )}
 
         {status === "unlocking" && (
           <Button variant="secondary" className="flex-1" disabled>
             <Clock className="h-4 w-4 mr-2 animate-spin" />
-            Déverrouillage en cours...
+            {t("lockboxDetail.unlocking")}
           </Button>
         )}
 
         {status === "unlocked" && (
           <Button onClick={handleRelock} variant="secondary" className="flex-1">
             <Lock className="h-4 w-4 mr-2" />
-            Reverrouiller maintenant
+            {t("lockboxDetail.relockNow")}
           </Button>
         )}
 
@@ -293,9 +287,9 @@ export const LockboxDetail: React.FC<LockboxDetailProps> = ({
         isOpen={showDeleteConfirm}
         onClose={() => setShowDeleteConfirm(false)}
         onConfirm={handleDelete}
-        title="Supprimer la lockbox ?"
-        message="Cette action est irréversible. Tout le contenu sera perdu définitivement."
-        confirmText="Supprimer"
+        title={t("lockboxDetail.deleteConfirmTitle")}
+        message={t("lockboxDetail.deleteConfirmMessage")}
+        confirmText={t("lockboxDetail.delete")}
         variant="danger"
       />
     </div>

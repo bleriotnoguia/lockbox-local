@@ -8,11 +8,13 @@ import {
   LoginScreen,
 } from './components';
 import { useLockboxStore, useAuthStore } from './store';
+import { useTranslation } from './i18n';
 import type { Lockbox } from './types';
 
 export const App: React.FC = () => {
   const [selectedLockbox, setSelectedLockbox] = useState<Lockbox | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const { t } = useTranslation();
 
   const {
     isAuthenticated,
@@ -111,9 +113,9 @@ export const App: React.FC = () => {
                   <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                   <circle cx="12" cy="16" r="1" />
                 </svg>
-                <p className="text-lg font-medium">Sélectionnez une lockbox</p>
+                <p className="text-lg font-medium">{t('app.selectLockbox')}</p>
                 <p className="text-sm">
-                  Cliquez sur une lockbox pour voir ses détails
+                  {t('app.selectLockboxHint')}
                 </p>
               </div>
             )}

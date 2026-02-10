@@ -35,17 +35,17 @@ export function getStatusColor(status: LockboxStatus): string {
   }
 }
 
-export function getStatusText(status: LockboxStatus): string {
+export function getStatusKey(status: LockboxStatus): `status.${string}` {
   switch (status) {
     case 'locked':
-      return 'Verrouillé';
+      return 'status.locked';
     case 'unlocking':
-      return 'Déverrouillage...';
+      return 'status.unlocking';
     case 'unlocked':
-      return 'Déverrouillé';
+      return 'status.unlocked';
     case 'relocking':
-      return 'Reverrouillage...';
+      return 'status.relocking';
     default:
-      return 'Inconnu';
+      return 'status.unknown';
   }
 }

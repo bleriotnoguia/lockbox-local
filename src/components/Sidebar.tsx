@@ -2,10 +2,12 @@ import React from 'react';
 import { Folder, Tag } from 'lucide-react';
 import { clsx } from 'clsx';
 import { useLockboxStore } from '../store';
+import { useTranslation } from '../i18n';
 import { CATEGORIES } from '../types';
 
 export const Sidebar: React.FC = () => {
   const { selectedCategory, setSelectedCategory, lockboxes } = useLockboxStore();
+  const { t } = useTranslation();
 
   // Count lockboxes per category
   const categoryCounts = CATEGORIES.reduce((acc, cat) => {
@@ -19,7 +21,7 @@ export const Sidebar: React.FC = () => {
     <aside className="w-64 bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 p-4">
       <div className="mb-6">
         <h2 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
-          Catégories
+          {t('sidebar.categories')}
         </h2>
         <nav className="space-y-1">
           {/* All */}
@@ -34,7 +36,7 @@ export const Sidebar: React.FC = () => {
           >
             <div className="flex items-center gap-2">
               <Folder className="h-4 w-4" />
-              <span>Toutes</span>
+              <span>{t('sidebar.all')}</span>
             </div>
             <span className="text-xs bg-gray-200 dark:bg-gray-700 px-2 py-0.5 rounded-full">
               {lockboxes.length}
@@ -55,7 +57,7 @@ export const Sidebar: React.FC = () => {
             >
               <div className="flex items-center gap-2">
                 <Tag className="h-4 w-4" />
-                <span>{category}</span>
+                <span>{t(`category.${category}` as 'category.Passwords')}</span>
               </div>
               {categoryCounts[category] > 0 && (
                 <span className="text-xs bg-gray-200 dark:bg-gray-700 px-2 py-0.5 rounded-full">
@@ -78,7 +80,7 @@ export const Sidebar: React.FC = () => {
             >
               <div className="flex items-center gap-2">
                 <Tag className="h-4 w-4 opacity-50" />
-                <span>Non catégorisées</span>
+                <span>{t('sidebar.uncategorized')}</span>
               </div>
               <span className="text-xs bg-gray-200 dark:bg-gray-700 px-2 py-0.5 rounded-full">
                 {uncategorizedCount}
@@ -91,23 +93,23 @@ export const Sidebar: React.FC = () => {
       {/* Stats */}
       <div className="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
         <h2 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
-          Statistiques
+          {t('sidebar.stats')}
         </h2>
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-600 dark:text-gray-400">Total</span>
+            <span className="text-gray-600 dark:text-gray-400">{t('sidebar.total')}</span>
             <span className="font-medium text-gray-900 dark:text-white">
               {lockboxes.length}
             </span>
           </div>
           <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-600 dark:text-gray-400">Verrouillées</span>
+            <span className="text-gray-600 dark:text-gray-400">{t('sidebar.locked')}</span>
             <span className="font-medium text-red-600 dark:text-red-400">
               {lockboxes.filter((lb) => lb.is_locked).length}
             </span>
           </div>
           <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-600 dark:text-gray-400">Déverrouillées</span>
+            <span className="text-gray-600 dark:text-gray-400">{t('sidebar.unlocked')}</span>
             <span className="font-medium text-green-600 dark:text-green-400">
               {lockboxes.filter((lb) => !lb.is_locked).length}
             </span>

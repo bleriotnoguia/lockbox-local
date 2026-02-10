@@ -2,6 +2,7 @@ import React from 'react';
 import { Package } from 'lucide-react';
 import { LockboxCard } from './LockboxCard';
 import { useFilteredLockboxes, useLockboxStore } from '../store';
+import { useTranslation } from '../i18n';
 import type { Lockbox } from '../types';
 
 interface LockboxListProps {
@@ -15,6 +16,7 @@ export const LockboxList: React.FC<LockboxListProps> = ({
 }) => {
   const filteredLockboxes = useFilteredLockboxes();
   const isLoading = useLockboxStore((state) => state.isLoading);
+  const { t } = useTranslation();
 
   if (isLoading) {
     return (
@@ -28,8 +30,8 @@ export const LockboxList: React.FC<LockboxListProps> = ({
     return (
       <div className="flex flex-col items-center justify-center h-64 text-gray-500 dark:text-gray-400">
         <Package className="h-16 w-16 mb-4 opacity-50" />
-        <p className="text-lg font-medium">Aucune lockbox trouvée</p>
-        <p className="text-sm">Créez votre première lockbox pour commencer</p>
+        <p className="text-lg font-medium">{t('lockboxList.empty')}</p>
+        <p className="text-sm">{t('lockboxList.emptyHint')}</p>
       </div>
     );
   }

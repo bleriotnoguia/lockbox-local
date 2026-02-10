@@ -3,7 +3,8 @@ import { Lock, Unlock, Clock, Tag } from 'lucide-react';
 import { clsx } from 'clsx';
 import type { Lockbox } from '../types';
 import { useCountdown, formatTimeRemaining } from '../hooks/useCountdown';
-import { useLockboxStatus, getStatusColor, getStatusText } from '../hooks/useLockboxStatus';
+import { useLockboxStatus, getStatusColor, getStatusKey } from '../hooks/useLockboxStatus';
+import { useTranslation } from '../i18n';
 
 interface LockboxCardProps {
   lockbox: Lockbox;
@@ -17,7 +18,8 @@ export const LockboxCard: React.FC<LockboxCardProps> = ({
   isSelected = false,
 }) => {
   const status = useLockboxStatus(lockbox);
-  
+  const { t } = useTranslation();
+
   const targetTimestamp = status === 'unlocking' 
     ? lockbox.unlock_timestamp 
     : status === 'unlocked' 
@@ -61,7 +63,7 @@ export const LockboxCard: React.FC<LockboxCardProps> = ({
               <div className="flex items-center gap-1 mt-1">
                 <Tag className="h-3 w-3 text-gray-400" />
                 <span className="text-xs text-gray-500 dark:text-gray-400">
-                  {lockbox.category}
+                  {t(`category.${lockbox.category}` as 'category.Passwords')}
                 </span>
               </div>
             )}
@@ -75,7 +77,7 @@ export const LockboxCard: React.FC<LockboxCardProps> = ({
               getStatusColor(status)
             )}
           >
-            {getStatusText(status)}
+            {t(getStatusKey(status))}
           </span>
         </div>
       </div>
@@ -85,7 +87,7 @@ export const LockboxCard: React.FC<LockboxCardProps> = ({
         <div className="mt-3 flex items-center gap-2 text-sm">
           <Clock className="h-4 w-4 text-gray-400 animate-pulse" />
           <span className="font-mono text-gray-600 dark:text-gray-300">
-            {status === 'unlocking' ? 'Déverrouillage dans: ' : 'Reverrouillage dans: '}
+            {status === 'unlocking' ? t('lockboxCard.unlockIn') : t('lockboxCard.relockIn')}
             <span className="font-semibold text-primary-600 dark:text-primary-400">
               {formatTimeRemaining(timeRemaining)}
             </span>
