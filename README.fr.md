@@ -28,6 +28,53 @@ Téléchargez la dernière version pour votre plateforme :
 
 > Toutes les releases sont disponibles sur la [page des Releases](https://github.com/bleriotnoguia/lockbox-local/releases).
 
+## Installation
+
+### Linux (Ubuntu/Debian) — .deb
+
+1. Téléchargez le fichier `.deb` sur la [page des Releases](https://github.com/bleriotnoguia/lockbox-local/releases/latest)
+2. Installez avec :
+
+```bash
+sudo dpkg -i Lockbox-Local_*.deb
+```
+
+Si des dépendances manquent :
+
+```bash
+sudo apt-get install -f
+```
+
+### Windows — .msi
+
+1. Téléchargez le fichier `.msi` sur la [page des Releases](https://github.com/bleriotnoguia/lockbox-local/releases/latest)
+2. Double-cliquez sur le fichier et suivez l'assistant d'installation
+3. Lancez **Lockbox Local** depuis le menu Démarrer
+
+### macOS — .dmg
+
+1. Téléchargez le fichier `.dmg` sur la [page des Releases](https://github.com/bleriotnoguia/lockbox-local/releases/latest)
+2. Ouvrez le fichier `.dmg`
+3. Glissez **Lockbox Local** vers le dossier **Applications**
+4. Lancez depuis Applications ou Spotlight
+
+### Linux — AppImage
+
+1. Téléchargez le fichier `.AppImage` sur la [page des Releases](https://github.com/bleriotnoguia/lockbox-local/releases/latest)
+2. Rendez-le exécutable :
+
+```bash
+chmod +x Lockbox-Local_*.AppImage
+```
+
+3. Exécutez-le :
+
+```bash
+./Lockbox-Local_*.AppImage
+```
+
+Aucune installation requise — l'AppImage fonctionne comme une application portable.
+
 ## Désinstallation
 
 ### Linux (Ubuntu/Debian) — .deb
