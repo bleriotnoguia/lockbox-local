@@ -28,6 +28,52 @@ Téléchargez la dernière version pour votre plateforme :
 
 > Toutes les releases sont disponibles sur la [page des Releases](https://github.com/bleriotnoguia/lockbox-local/releases).
 
+## Désinstallation
+
+### Linux (Ubuntu/Debian) — .deb
+
+```bash
+sudo apt remove lockbox-local
+```
+
+Pour supprimer aussi la configuration et les données :
+
+```bash
+sudo apt remove lockbox-local
+rm -rf ~/.local/share/com.lockbox.local
+rm -rf ~/.config/com.lockbox.local
+```
+
+### Windows — .msi
+
+1. Ouvrez **Paramètres** → **Applications** → **Applications installées**
+2. Recherchez **Lockbox Local**
+3. Cliquez sur les trois points → **Désinstaller**
+
+Ou via PowerShell :
+
+```powershell
+Get-Package -Name "Lockbox Local" | Uninstall-Package
+```
+
+### macOS — .dmg
+
+1. Ouvrez **Finder** → **Applications**
+2. Glissez **Lockbox Local** vers la Corbeille
+3. Vide la Corbeille
+
+### Linux — AppImage
+
+Si vous avez exécuté l'AppImage directement (sans installation) :
+
+1. Supprimez le fichier `.AppImage`
+2. Optionnel : supprimez la configuration et les données :
+
+```bash
+rm -rf ~/.local/share/com.lockbox.local
+rm -rf ~/.config/com.lockbox.local
+```
+
 ## Contexte et motivation
 
 Lockbox Local est inspiré de [Pluckeye Lockbox](https://lockbox.pluckeye.net/help), une application web qui permet de stocker des informations dans des "boîtes" accessibles uniquement après un délai. C'est utile si vous avez besoin de cacher un mot de passe à vous-même, pour vous aider avec le **contrôle de soi**.
