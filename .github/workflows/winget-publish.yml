@@ -1,0 +1,16 @@
+name: Publish to winget
+
+on:
+  release:
+    types: [released]
+
+jobs:
+  publish:
+    runs-on: windows-latest
+    steps:
+      - name: Submit to winget
+        uses: vedantmgoyal9/winget-releaser@main
+        with:
+          identifier: noguia.lockbox
+          installers-regex: '\.msi$'
+          token: ${{ secrets.WINGET_TOKEN }}

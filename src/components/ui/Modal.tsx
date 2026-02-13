@@ -1,6 +1,7 @@
 import React, { useEffect, useCallback } from 'react';
 import { X } from 'lucide-react';
 import { clsx } from 'clsx';
+import { useTranslation } from '../../i18n';
 
 interface ModalProps {
   isOpen: boolean;
@@ -103,11 +104,14 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   onConfirm,
   title,
   message,
-  confirmText = 'Confirmer',
-  cancelText = 'Annuler',
+  confirmText,
+  cancelText,
   variant = 'danger',
   isLoading = false,
 }) => {
+  const { t } = useTranslation();
+  const resolvedConfirmText = confirmText ?? t('common.confirm');
+  const resolvedCancelText = cancelText ?? t('common.cancel');
   const variantStyles = {
     danger: 'bg-red-600 hover:bg-red-700 focus:ring-red-500',
     warning: 'bg-yellow-600 hover:bg-yellow-700 focus:ring-yellow-500',
@@ -123,7 +127,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
           disabled={isLoading}
           className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors disabled:opacity-50"
         >
-          {cancelText}
+          {resolvedCancelText}
         </button>
         <button
           onClick={onConfirm}
@@ -133,7 +137,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
             variantStyles[variant]
           )}
         >
-          {isLoading ? 'Chargement...' : confirmText}
+          {isLoading ? t('common.loading') : resolvedConfirmText}
         </button>
       </div>
     </Modal>

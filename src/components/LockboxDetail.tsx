@@ -277,9 +277,9 @@ export const LockboxDetail: React.FC<LockboxDetailProps> = ({
         isOpen={showUnlockConfirm}
         onClose={() => setShowUnlockConfirm(false)}
         onConfirm={handleUnlock}
-        title="Déverrouiller la lockbox ?"
-        message={`Le déverrouillage prendra ${formatDelay(lockbox.unlock_delay_seconds)}. Êtes-vous sûr de vouloir continuer ?`}
-        confirmText="Déverrouiller"
+        title={t("lockboxDetail.unlockConfirmTitle")}
+        message={t("lockboxDetail.unlockConfirmMessage", { delay: formatDelay(lockbox.unlock_delay_seconds) })}
+        confirmText={t("lockboxDetail.unlock")}
         variant="warning"
       />
 

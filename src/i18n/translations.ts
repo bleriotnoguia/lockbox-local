@@ -2,6 +2,11 @@ export type Locale = 'en' | 'fr';
 
 export const translations = {
   en: {
+    common: {
+      confirm: 'Confirm',
+      cancel: 'Cancel',
+      loading: 'Loading...',
+    },
     login: {
       passwordRequired: 'Password is required',
       passwordMinLength: 'Password must be at least 8 characters',
@@ -124,6 +129,11 @@ export const translations = {
     },
   },
   fr: {
+    common: {
+      confirm: 'Confirmer',
+      cancel: 'Annuler',
+      loading: 'Chargement...',
+    },
     login: {
       passwordRequired: 'Le mot de passe est requis',
       passwordMinLength: 'Le mot de passe doit contenir au moins 8 caractères',
