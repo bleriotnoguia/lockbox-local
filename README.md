@@ -58,6 +58,14 @@ sudo apt-get install -f
 3. Drag **Lockbox Local** to the **Applications** folder
 4. Launch from Applications or Spotlight
 
+> **Note:** If macOS shows a message saying the app "is damaged and can't be opened", this is because the app is not yet notarized by Apple. To fix this, open **Terminal** and run:
+>
+> ```bash
+> xattr -cr /Applications/Lockbox\ Local.app
+> ```
+>
+> Then try launching the app again.
+
 ### Linux — AppImage
 
 1. Download the `.AppImage` file from the [Releases page](https://github.com/bleriotnoguia/lockbox-local/releases/latest)
