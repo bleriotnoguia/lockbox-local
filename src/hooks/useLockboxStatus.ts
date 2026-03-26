@@ -9,6 +9,9 @@ export function useLockboxStatus(lockbox: Lockbox): LockboxStatus {
       if (lockbox.unlock_timestamp && lockbox.unlock_timestamp > now) {
         return 'unlocking';
       }
+      if (lockbox.scheduled_unlock_at && lockbox.scheduled_unlock_at > now) {
+        return 'scheduled';
+      }
       return 'locked';
     }
 
@@ -16,8 +19,8 @@ export function useLockboxStatus(lockbox: Lockbox): LockboxStatus {
       return 'unlocked';
     }
 
-    return 'locked'; // Should relock
-  }, [lockbox.is_locked, lockbox.unlock_timestamp, lockbox.relock_timestamp]);
+    return 'locked';
+  }, [lockbox.is_locked, lockbox.unlock_timestamp, lockbox.relock_timestamp, lockbox.scheduled_unlock_at]);
 }
 
 export function getStatusColor(status: LockboxStatus): string {
@@ -26,6 +29,8 @@ export function getStatusColor(status: LockboxStatus): string {
       return 'bg-red-500';
     case 'unlocking':
       return 'bg-yellow-500';
+    case 'scheduled':
+      return 'bg-blue-500';
     case 'unlocked':
       return 'bg-green-500';
     case 'relocking':
@@ -41,6 +46,8 @@ export function getStatusKey(status: LockboxStatus): `status.${string}` {
       return 'status.locked';
     case 'unlocking':
       return 'status.unlocking';
+    case 'scheduled':
+      return 'status.scheduled';
     case 'unlocked':
       return 'status.unlocked';
     case 'relocking':

@@ -39,7 +39,7 @@ export function useExportImport() {
     }
   };
 
-  const importLockboxes = async (): Promise<string[]> => {
+  const importLockboxes = async (sourcePassword: string | null = null): Promise<string[]> => {
     setIsImporting(true);
     setError(null);
 
@@ -57,9 +57,11 @@ export function useExportImport() {
       }
 
       const data = await readTextFile(filePath);
-      const imported = await invoke<string[]>('import_lockboxes', { data });
+      const imported = await invoke<string[]>('import_lockboxes', {
+        data,
+        sourcePassword: sourcePassword || null,
+      });
 
-      // Refresh the lockbox list
       await fetchLockboxes();
 
       setIsImporting(false);

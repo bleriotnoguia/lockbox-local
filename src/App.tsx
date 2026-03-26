@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
+import { ToastContainer } from "react-toastify";
 import {
   Header,
   Sidebar,
@@ -6,14 +7,20 @@ import {
   LockboxDetail,
   CreateLockboxModal,
   LoginScreen,
-} from './components';
-import { useLockboxStore, useAuthStore } from './store';
-import { useTranslation } from './i18n';
-import type { Lockbox } from './types';
+} from "./components";
+import { AboutModal } from "./components/AboutModal";
+import { DocModal } from "./components/DocModal";
+import { StatsModal } from "./components/StatsModal";
+import { useLockboxStore, useAuthStore, useThemeStore } from "./store";
+import { useTranslation } from "./i18n";
+import type { Lockbox } from "./types";
 
 export const App: React.FC = () => {
   const [selectedLockbox, setSelectedLockbox] = useState<Lockbox | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isAboutOpen, setIsAboutOpen] = useState(false);
+  const [isDocsOpen, setIsDocsOpen] = useState(false);
+  const [isStatsOpen, setIsStatsOpen] = useState(false);
   const { t } = useTranslation();
 
   const {
@@ -21,37 +28,27 @@ export const App: React.FC = () => {
     isLoading: authLoading,
     checkMasterPassword,
   } = useAuthStore();
+  const { fetchLockboxes, checkAndUpdateStates, lockboxes } = useLockboxStore();
+  const { theme } = useThemeStore();
 
-  const {
-    fetchLockboxes,
-    checkAndUpdateStates,
-    lockboxes,
-  } = useLockboxStore();
-
-  // Check if master password is set on mount
   useEffect(() => {
     checkMasterPassword();
   }, [checkMasterPassword]);
 
-  // Fetch lockboxes when authenticated
   useEffect(() => {
     if (isAuthenticated) {
       fetchLockboxes();
     }
   }, [isAuthenticated, fetchLockboxes]);
 
-  // Periodically check and update lockbox states
   useEffect(() => {
     if (!isAuthenticated) return;
-
     const interval = setInterval(() => {
       checkAndUpdateStates();
     }, 1000);
-
     return () => clearInterval(interval);
   }, [isAuthenticated, checkAndUpdateStates]);
 
-  // Update selected lockbox when lockboxes change
   useEffect(() => {
     if (selectedLockbox) {
       const updated = lockboxes.find((lb) => lb.id === selectedLockbox.id);
@@ -61,7 +58,6 @@ export const App: React.FC = () => {
     }
   }, [lockboxes, selectedLockbox]);
 
-  // Show loading screen
   if (authLoading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
@@ -70,17 +66,21 @@ export const App: React.FC = () => {
     );
   }
 
-  // Show login screen if not authenticated
   if (!isAuthenticated) {
     return <LoginScreen />;
   }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
-      <Header onCreateClick={() => setIsCreateModalOpen(true)} />
+      <Header
+        onCreateClick={() => setIsCreateModalOpen(true)}
+        onAboutClick={() => setIsAboutOpen(true)}
+        onDocsClick={() => setIsDocsOpen(true)}
+        onStatsClick={() => setIsStatsOpen(true)}
+      />
 
       <div className="flex flex-1 overflow-hidden">
-        <Sidebar />
+        <Sidebar onStatsClick={() => setIsStatsOpen(true)} />
 
         <main className="flex-1 flex overflow-hidden">
           {/* Lockbox List */}
@@ -92,7 +92,7 @@ export const App: React.FC = () => {
           </div>
 
           {/* Lockbox Detail */}
-          <div className="w-1/2 p-6 overflow-y-auto">
+          <div className="w-1/2 pr-6 pl-8 py-6 overflow-y-auto">
             {selectedLockbox ? (
               <LockboxDetail
                 lockbox={selectedLockbox}
@@ -113,10 +113,8 @@ export const App: React.FC = () => {
                   <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                   <circle cx="12" cy="16" r="1" />
                 </svg>
-                <p className="text-lg font-medium">{t('app.selectLockbox')}</p>
-                <p className="text-sm">
-                  {t('app.selectLockboxHint')}
-                </p>
+                <p className="text-lg font-medium">{t("app.selectLockbox")}</p>
+                <p className="text-sm">{t("app.selectLockboxHint")}</p>
               </div>
             )}
           </div>
@@ -126,6 +124,20 @@ export const App: React.FC = () => {
       <CreateLockboxModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
+      />
+
+      <AboutModal isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
+      <DocModal isOpen={isDocsOpen} onClose={() => setIsDocsOpen(false)} />
+      <StatsModal isOpen={isStatsOpen} onClose={() => setIsStatsOpen(false)} />
+
+      <ToastContainer
+        position="bottom-right"
+        autoClose={4000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        theme={theme === 'dark' ? 'dark' : theme === 'light' ? 'light' : 'colored'}
       />
     </div>
   );

@@ -1,6 +1,6 @@
 {
   "name": "lockbox-local",
-  "version": "2.0.0",
+  "version": "2.3.0",
   "description": "A secure, delay-based password and information storage application",
   "type": "module",
   "scripts": {
@@ -19,11 +19,13 @@
     "@tauri-apps/plugin-dialog": "^2.0.0",
     "@tauri-apps/plugin-fs": "^2.0.0",
     "@tauri-apps/plugin-notification": "^2.0.0",
+    "@tauri-apps/plugin-shell": "^2.3.5",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.469.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "zustand": "^5.0.0",
-    "lucide-react": "^0.469.0",
-    "clsx": "^2.1.1"
+    "react-toastify": "^11.0.5",
+    "zustand": "^5.0.0"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.0.0",

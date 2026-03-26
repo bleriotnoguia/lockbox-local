@@ -19,7 +19,7 @@ fn main() {
     std::env::set_var("WEBKIT_DISABLE_COMPOSITING_MODE", "1");
 
     let db = Database::new().expect("Failed to initialize database");
-    
+
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())
@@ -36,6 +36,12 @@ fn main() {
             commands::update_lockbox,
             commands::delete_lockbox,
             commands::unlock_lockbox,
+            commands::cancel_unlock,
+            commands::extend_unlock_delay,
+            commands::use_panic_code,
+            commands::reset_panic_code,
+            commands::get_access_log,
+            commands::get_global_access_log,
             commands::relock_lockbox,
             commands::export_lockboxes,
             commands::import_lockboxes,

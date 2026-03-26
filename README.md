@@ -15,6 +15,54 @@ A secure desktop application for storing sensitive information with access delay
   <img src="public/screenshot.png" alt="Lockbox Local Screenshot" width="800" />
 </p>
 
+## Background & Motivation
+
+Lockbox Local is inspired by [Pluckeye Lockbox](https://lockbox.pluckeye.net/help), a web application that lets you store information in "boxes" which can only be accessed after a delay period. This is useful if you need to hide a password from yourself, for help with **self-control**.
+
+Pluckeye Lockbox has been around for years, but it's a free service run by a single person. As the author warns:
+
+> *"[Pluckeye Lockbox boxes] threaten to destruct mainly so that users do not assume the service will be around forever. You should not assume your data will be kept longer than 1 year, because the service is 100% free and run by one person."* — [(Source)](https://www.reddit.com/r/pluckeye/comments/mvyvmw/lockbox_i_typed_never_into_the_self_destruct_date/)
+
+If you stored a critical password in Pluckeye Lockbox and the server crashed with all data lost, you'd be permanently locked out. **Lockbox Local solves this** by keeping everything on your own machine — no cloud dependency, no risk of service shutdown, and **boxes never self-destruct**.
+
+### What changed from [v1 (Java)](https://github.com/japierreSWE/Lockbox_Local)?
+
+The original Lockbox Local was built with Java and SQLite. This **v2** is a complete rewrite using modern technologies (Tauri 2.0 + React 19 + Rust), bringing AES-256-GCM encryption, a master password, categories, search, theming, and a much smaller footprint (see [comparison table](#comparison-with-v1-java) below).
+
+## Features
+
+### Core
+- **Secure storage** — End-to-end AES-256-GCM encryption with PBKDF2 key derivation
+- **Access delay** — Configurable waiting time before accessing content
+- **Auto re-lock** — Lockboxes automatically re-lock after a defined period
+- **Master password** — Global application protection; never stored in plaintext
+
+### Self-control tools
+- **Cancel countdown** — Abandon an active unlock countdown at any time
+- **Extend delay** — Permanently increase a lockbox's unlock delay (increase only, never decrease)
+- **Reflection modal** — Optional 10-second forced pause before confirming an unlock; supports a custom message and a checklist that must be fully ticked before proceeding
+- **Penalty mode** — Automatically adds extra delay when a countdown is cancelled, configurable per lockbox
+- **Panic code** — A single-use emergency bypass code set at lockbox creation; once used it cannot be reset without the code
+
+### Organisation
+- **Categories** — Organize your lockboxes by predefined category
+- **Free tags** — Add any number of custom tags to a lockbox; filter the list by tag from the sidebar
+- **Scheduled unlock** — Set a specific date and time for a lockbox to automatically become unlockable
+
+### Monitoring
+- **Access log** — Per-lockbox history of all unlock requests, completions, cancellations, panic uses and delay extensions
+- **Self-control statistics** — Monthly and all-time stats across all lockboxes: requests, completions, cancellations, panic uses, extensions; current streak (days without access)
+
+### Backup
+- **Import/Export** — Backup and restore in signed JSON format; cross-machine transfer with password re-encryption; HMAC integrity protection prevents delay tampering
+
+### Interface
+- **In-app documentation** — Built-in guide accessible from the header
+- **About & support** — App version, developer links, donation options, newsletter
+- **Dark/Light/System theme** — Adaptive interface; persists across sessions
+- **EN/FR localisation** — Full English and French translations
+- **Cross-platform** — Works on Windows, macOS and Linux
+
 ## Download
 
 Download the latest version for your platform:
@@ -129,31 +177,6 @@ rm -rf ~/.local/share/com.lockbox.local
 rm -rf ~/.config/com.lockbox.local
 ```
 
-## Background & Motivation
-
-Lockbox Local is inspired by [Pluckeye Lockbox](https://lockbox.pluckeye.net/help), a web application that lets you store information in "boxes" which can only be accessed after a delay period. This is useful if you need to hide a password from yourself, for help with **self-control**.
-
-Pluckeye Lockbox has been around for years, but it's a free service run by a single person. As the author warns:
-
-> *"[Pluckeye Lockbox boxes] threaten to destruct mainly so that users do not assume the service will be around forever. You should not assume your data will be kept longer than 1 year, because the service is 100% free and run by one person."* — [(Source)](https://www.reddit.com/r/pluckeye/comments/mvyvmw/lockbox_i_typed_never_into_the_self_destruct_date/)
-
-If you stored a critical password in Pluckeye Lockbox and the server crashed with all data lost, you'd be permanently locked out. **Lockbox Local solves this** by keeping everything on your own machine — no cloud dependency, no risk of service shutdown, and **boxes never self-destruct**.
-
-### What changed from [v1 (Java)](https://github.com/japierreSWE/Lockbox_Local)?
-
-The original Lockbox Local was built with Java and SQLite. This **v2** is a complete rewrite using modern technologies (Tauri 2.0 + React 19 + Rust), bringing AES-256-GCM encryption, a master password, categories, search, theming, and a much smaller footprint (see [comparison table](#comparison-with-v1-java) below).
-
-## Features
-
-- **Secure storage** - End-to-end AES-256-GCM encryption
-- **Access delay** - Configurable waiting time before accessing content
-- **Auto re-lock** - Lockboxes automatically re-lock after a defined period
-- **Master password** - Global application protection
-- **Categories** - Organize your lockboxes by category
-- **Import/Export** - Backup and restore in JSON format
-- **Dark/Light theme** - Adaptive interface according to your preferences
-- **Cross-platform** - Works on Windows, macOS and Linux
-
 ## Prerequisites
 
 ### For development
@@ -255,37 +278,108 @@ new-lockbox-local/
 
 ### Create a Lockbox
 
-1. Click on "New Lockbox"
+1. Click **"New Lockbox"**
 2. Enter a name and the content to protect
-3. Configure the unlock delay (waiting time)
-4. Configure the re-lock delay (access duration)
-5. Optional: Choose a category
+3. Set the **unlock delay** (waiting time) and the **re-lock delay** (access duration)
+4. Optional: choose a **category** and add **free tags**
+5. Expand the advanced sections to configure:
+   - **Reflection** — enable the 10-second pause modal, add a custom message and/or a line-by-line checklist
+   - **Penalty** — enable penalty mode and set the extra delay added when the countdown is cancelled
+   - **Scheduled unlock** — pick a date and time at which the lockbox automatically becomes unlockable
+   - **Panic code** — set a single-use emergency bypass code
 
 ### Unlock a Lockbox
 
-1. Select the lockbox
-2. Click on "Unlock"
-3. Wait for the countdown to finish
-4. Content will be visible for the configured duration
+1. Select the lockbox from the list
+2. Click **"Unlock"**
+3. If a **reflection modal** is configured, read the message and tick all checklist items during the 10-second countdown
+4. Wait for the countdown to finish
+5. Content is visible for the configured re-lock duration
+
+### During the countdown
+
+While a lockbox is counting down, the detail panel shows additional actions:
+
+- **Extend delay** (＋ button) — permanently increase the unlock delay by a chosen amount; also extends the current active countdown
+- **Cancel unlock** (✕ button) — abandon the countdown and return to locked state; if penalty mode is active, a warning shows the extra delay that will be applied
+
+### Panic code
+
+If you set a panic code when creating a lockbox, an emergency section appears in the lockbox detail while it is locked. Enter the code to instantly bypass the unlock delay. **The code can only be used once** — a new one can be set only by editing the lockbox and entering a new code.
+
+### Scheduled unlock
+
+When a lockbox has a scheduled date, its status shows as **Scheduled** with a calendar icon and a countdown to the scheduled time. At that time, the lockbox automatically transitions to the normal unlock countdown. You can still cancel or extend from the detail panel.
+
+### Access log & statistics
+
+- **Access log** (per lockbox) — click "Access history" at the bottom of a lockbox detail to see the full event history
+- **Statistics** (global) — click the chart icon in the header or "View details" in the sidebar to see monthly and all-time self-control stats and your current streak
 
 ### Import/Export
 
-- **Export**: Click on the download icon in the header
-- **Import**: Click on the upload icon and select a `.json` file
+#### Export
+
+Click the **download icon** (↓) in the header. A native dialog lets you choose where to save the `.json` file.
+
+After saving, a notice reminds you:
+
+> _"If you import this file on a different machine or with a different master password, you will be asked for the source password so the data can be re-encrypted for the new device."_
+
+#### Import
+
+Click the **upload icon** (↑) in the header. A dialog asks whether the file was exported from a different machine:
+
+- **Same machine / same password** — click "Same machine — skip". The encrypted data is inserted as-is; no re-encryption needed.
+- **Different machine or different password** — enter the master password that was active when the file was exported. The app will decrypt the content with the source password and re-encrypt it with the current one.
+
+Lockboxes with the same name as an existing one are silently skipped (no overwrite).
+
+#### What is preserved
+
+| Field | Exported | Imported |
+|---|:---:|:---:|
+| Name | ✓ | ✓ |
+| Content (encrypted) | ✓ | ✓ (re-encrypted if needed) |
+| Unlock & relock delays | ✓ | ✓ |
+| Category & tags | ✓ | ✓ |
+| Reflection settings | ✓ | ✓ |
+| Penalty settings | ✓ | ✓ |
+| Panic code | — | — |
+| Scheduled unlock date | — | — |
+
+> Panic codes cannot be transferred because only the hash is stored — the original code is never saved. Scheduled dates are intentionally not restored since a past date would be meaningless.
+
+#### Security & integrity
+
+The export file contains the content in **encrypted form** (AES-256-GCM). It is unreadable without the master password. Each lockbox entry is signed with **HMAC-SHA256** using the master password hash.
+
+At import, the signature is verified before any data is written. If the file has been tampered with (e.g., delays reduced, content substituted), the import will be rejected with an integrity error. This prevents using export/import as a way to bypass the unlock delay.
+
+> **Self-control note:** The unlock delay is a deliberate friction mechanism. Exporting does not reveal content in plaintext, and manipulated files are rejected — the delay cannot be circumvented via the import/export flow.
 
 ## Security
 
 ### Encryption
 
-- **Algorithm**: AES-256-GCM
-- **Key derivation**: PBKDF2 with 100,000 iterations
-- **Salt**: Randomly generated for each content
+- **Algorithm**: AES-256-GCM (authenticated encryption)
+- **Key derivation**: PBKDF2-HMAC-SHA256 with 100,000 iterations
+- **Salt**: Randomly generated per content — no two ciphertexts are alike even for identical content
+- **Master password**: Hashed with SHA-256; never stored in plaintext; never leaves your device
 
 ### Storage
 
-- Local SQLite database
-- No data sent over the Internet
-- All data remains on your machine
+- Local SQLite database — all data stays on your machine
+- No network connection, no telemetry, no cloud dependency
+- Panic codes are stored as one-way hashes only
+
+### Export integrity
+
+Export files are signed with **HMAC-SHA256** using the master password hash. Any modification to the file (delays, content, names) invalidates the signature and causes the import to be rejected. This prevents using export/import to bypass the unlock delay.
+
+### Self-control design
+
+The unlock delay is a deliberate friction mechanism, not a cryptographic lock. The app is designed to resist **impulsive** attempts to access content, not adversarial attacks by a determined user who knows the master password. For stronger guarantees, consider a longer delay or enabling the penalty mode.
 
 ## Development
 
@@ -413,9 +507,19 @@ You can add these scripts to `package.json`:
 | Encryption | No | AES-256-GCM |
 | Master password | No | Yes |
 | Categories | No | Yes |
+| Free tags | No | Yes |
 | Search | No | Yes |
 | Dark theme | No | Yes |
-| Export format | .lbf (text) | .json |
+| Cancel countdown | No | Yes |
+| Extend delay | No | Yes |
+| Reflection modal | No | Yes |
+| Penalty mode | No | Yes |
+| Panic code | No | Yes |
+| Scheduled unlock | No | Yes |
+| Access log | No | Yes |
+| Self-control stats | No | Yes |
+| Export format | .lbf (text) | .json (HMAC-signed) |
+| EN/FR localisation | No | Yes |
 
 ## License
 

@@ -6,3 +6,8 @@ export { CreateLockboxModal } from './CreateLockboxModal';
 export { Header } from './Header';
 export { Sidebar } from './Sidebar';
 export { LoginScreen } from './LoginScreen';
+export { ReflectionModal } from './ReflectionModal';
+export { ExtendDelayModal } from './ExtendDelayModal';
+export { AboutModal } from './AboutModal';
+export { DocModal } from './DocModal';
+export { StatsModal } from './StatsModal';

@@ -3,10 +3,13 @@ use aes_gcm::{
     Aes256Gcm, Nonce,
 };
 use base64::{engine::general_purpose::STANDARD as BASE64, Engine};
+use hmac::{Hmac, Mac};
 use pbkdf2::pbkdf2_hmac;
 use rand::RngCore;
 use sha2::{Digest, Sha256};
 use thiserror::Error;
+
+type HmacSha256 = Hmac<Sha256>;
 
 #[derive(Error, Debug)]
 pub enum CryptoError {
@@ -96,6 +99,19 @@ pub fn hash_password(password: &str) -> String {
 /// Verifies a password against its hash
 pub fn verify_password(password: &str, hash: &str) -> bool {
     hash_password(password) == hash
+}
+
+/// Signs data with HMAC-SHA256 using the given key. Returns a hex-encoded signature.
+pub fn hmac_sign(data: &str, key: &str) -> String {
+    let mut mac = <HmacSha256 as digest::KeyInit>::new_from_slice(key.as_bytes())
+        .expect("HMAC accepts keys of any size");
+    mac.update(data.as_bytes());
+    hex::encode(mac.finalize().into_bytes())
+}
+
+/// Verifies a HMAC-SHA256 signature.
+pub fn hmac_verify(data: &str, key: &str, signature: &str) -> bool {
+    hmac_sign(data, key) == signature
 }
 
 #[cfg(test)]
