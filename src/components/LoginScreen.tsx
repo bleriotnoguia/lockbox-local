@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Lock, Eye, EyeOff, Shield } from 'lucide-react';
+import { Lock, Eye, EyeOff, Shield, AlertTriangle } from 'lucide-react';
 import { Button } from './ui/Button';
 import { Input } from './ui/Input';
+import { Modal } from './ui/Modal';
 import { useAuthStore } from '../store';
 import { useTranslation } from '../i18n';
 
@@ -10,6 +11,9 @@ export const LoginScreen: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [pendingPassword, setPendingPassword] = useState('');
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [hasConfirmed, setHasConfirmed] = useState(false);
   const { t, locale, setLocale } = useTranslation();
 
   const {
@@ -38,13 +42,21 @@ export const LoginScreen: React.FC = () => {
         setError(t('login.passwordMismatch'));
         return;
       }
-      await setMasterPassword(password);
+      // Show confirmation modal before persisting
+      setPendingPassword(password);
+      setHasConfirmed(false);
+      setShowConfirmModal(true);
     } else {
       const isValid = await verifyMasterPassword(password);
       if (!isValid) {
         setError(t('login.wrongPassword'));
       }
     }
+  };
+
+  const handleConfirmSetup = async () => {
+    setShowConfirmModal(false);
+    await setMasterPassword(pendingPassword);
   };
 
   const displayError =
@@ -148,6 +160,45 @@ export const LoginScreen: React.FC = () => {
           </p>
         )}
       </div>
+
+      {/* Master password setup confirmation modal */}
+      <Modal
+        isOpen={showConfirmModal}
+        onClose={() => setShowConfirmModal(false)}
+        title={t('login.confirmModalTitle')}
+        size="sm"
+      >
+        <div className="space-y-4">
+          <div className="flex items-start gap-3 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-lg">
+            <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+            <p className="text-sm text-amber-800 dark:text-amber-300">
+              {t('login.confirmModalBody')}
+            </p>
+          </div>
+
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={hasConfirmed}
+              onChange={(e) => setHasConfirmed(e.target.checked)}
+              className="mt-0.5 h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+            />
+            <span className="text-sm text-gray-700 dark:text-gray-300">
+              {t('login.confirmModalCheckbox')}
+            </span>
+          </label>
+
+          <div className="flex justify-end gap-2">
+            <Button variant="secondary" onClick={() => setShowConfirmModal(false)}>
+              {t('common.cancel')}
+            </Button>
+            <Button onClick={handleConfirmSetup} disabled={!hasConfirmed} isLoading={isLoading}>
+              <Lock className="h-4 w-4 mr-2" />
+              {t('login.confirmModalButton')}
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };

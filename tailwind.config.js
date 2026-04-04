@@ -32,6 +32,9 @@ export default {
           dark: '#16a34a',
         },
       },
+      zIndex: {
+        '60': '60',
+      },
       animation: {
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         'countdown': 'countdown 1s ease-in-out infinite',

@@ -13,6 +13,7 @@ import {
   BookOpen,
   BarChart2,
   ShieldAlert,
+  Wand2,
 } from 'lucide-react';
 import { clsx } from 'clsx';
 import { Button } from './ui/Button';
@@ -26,9 +27,10 @@ interface HeaderProps {
   onAboutClick: () => void;
   onDocsClick: () => void;
   onStatsClick: () => void;
+  onGeneratorClick: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onCreateClick, onAboutClick, onDocsClick, onStatsClick }) => {
+export const Header: React.FC<HeaderProps> = ({ onCreateClick, onAboutClick, onDocsClick, onStatsClick, onGeneratorClick }) => {
   const { searchQuery, setSearchQuery } = useLockboxStore();
   const { theme, setTheme } = useThemeStore();
   const { t, locale, setLocale } = useTranslation();
@@ -148,6 +150,7 @@ export const Header: React.FC<HeaderProps> = ({ onCreateClick, onAboutClick, onD
           <div className="w-px h-5 bg-gray-200 dark:bg-gray-600 mx-1" />
 
           {/* Stats / Docs / About */}
+          {iconBtn(onGeneratorClick, <Wand2 className="h-5 w-5" />, t('header.passwordGenerator'))}
           {iconBtn(onStatsClick, <BarChart2 className="h-5 w-5" />, t('header.stats'))}
           {iconBtn(onDocsClick, <BookOpen className="h-5 w-5" />, t('header.docs'))}
           {iconBtn(onAboutClick, <Info className="h-5 w-5" />, t('header.about'))}

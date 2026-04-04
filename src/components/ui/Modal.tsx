@@ -9,6 +9,8 @@ interface ModalProps {
   title: string;
   children: React.ReactNode;
   size?: 'sm' | 'md' | 'lg' | 'xl';
+  /** Use 'high' when this modal is opened on top of another modal */
+  layer?: 'base' | 'high';
 }
 
 export const Modal: React.FC<ModalProps> = ({
@@ -17,6 +19,7 @@ export const Modal: React.FC<ModalProps> = ({
   title,
   children,
   size = 'md',
+  layer = 'base',
 }) => {
   const handleEscape = useCallback(
     (e: KeyboardEvent) => {
@@ -48,8 +51,10 @@ export const Modal: React.FC<ModalProps> = ({
     xl: 'max-w-xl',
   };
 
+  const zClass = layer === 'high' ? 'z-60' : 'z-50';
+
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
+    <div className={clsx('fixed inset-0 overflow-y-auto', zClass)}>
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-black/50 transition-opacity"

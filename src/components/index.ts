@@ -11,3 +11,4 @@ export { ExtendDelayModal } from './ExtendDelayModal';
 export { AboutModal } from './AboutModal';
 export { DocModal } from './DocModal';
 export { StatsModal } from './StatsModal';
+export { PasswordGeneratorModal } from './PasswordGeneratorModal';

@@ -42,18 +42,20 @@ function computeStats(entries: AccessLogEntry[]): Stats {
   };
 }
 
-function computeStreak(_lockboxes: unknown[], entries: AccessLogEntry[]): number {
+function computeStreak(_lockboxes: unknown[], entries: AccessLogEntry[]): number | null {
   const completedTimestamps = entries
     .filter((e) => e.event_type === 'unlock_completed')
     .map((e) => e.timestamp)
     .sort((a, b) => b - a);
 
-  if (completedTimestamps.length === 0) return 0;
+  // null means never accessed → perfect streak (∞)
+  if (completedTimestamps.length === 0) return null;
 
-  const now = Date.now();
-  const lastAccess = completedTimestamps[0];
-  const diffDays = Math.floor((now - lastAccess) / (1000 * 60 * 60 * 24));
-  return diffDays;
+  const lastDate = new Date(completedTimestamps[0]);
+  lastDate.setHours(0, 0, 0, 0);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return Math.floor((today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
 }
 
 interface StatCardProps {
@@ -196,7 +198,11 @@ export const StatsModal: React.FC<StatsModalProps> = ({ isOpen, onClose }) => {
               {t('stats.streakTitle')}
             </h3>
             <p className="text-3xl font-bold text-primary-600 dark:text-primary-400">
-              {t('stats.streakDays', { days: streakDays })}
+              {streakDays === null
+                ? t('stats.streakNever')
+                : streakDays === 1
+                  ? t('stats.streakDay')
+                  : t('stats.streakDays', { days: streakDays })}
             </p>
           </div>
         </div>

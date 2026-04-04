@@ -11,6 +11,7 @@ import {
 import { AboutModal } from "./components/AboutModal";
 import { DocModal } from "./components/DocModal";
 import { StatsModal } from "./components/StatsModal";
+import { PasswordGeneratorModal } from "./components/PasswordGeneratorModal";
 import { useLockboxStore, useAuthStore, useThemeStore } from "./store";
 import { useTranslation } from "./i18n";
 import type { Lockbox } from "./types";
@@ -21,6 +22,7 @@ export const App: React.FC = () => {
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isDocsOpen, setIsDocsOpen] = useState(false);
   const [isStatsOpen, setIsStatsOpen] = useState(false);
+  const [isGeneratorOpen, setIsGeneratorOpen] = useState(false);
   const { t } = useTranslation();
 
   const {
@@ -77,6 +79,7 @@ export const App: React.FC = () => {
         onAboutClick={() => setIsAboutOpen(true)}
         onDocsClick={() => setIsDocsOpen(true)}
         onStatsClick={() => setIsStatsOpen(true)}
+        onGeneratorClick={() => setIsGeneratorOpen(true)}
       />
 
       <div className="flex flex-1 overflow-hidden">
@@ -129,6 +132,7 @@ export const App: React.FC = () => {
       <AboutModal isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
       <DocModal isOpen={isDocsOpen} onClose={() => setIsDocsOpen(false)} />
       <StatsModal isOpen={isStatsOpen} onClose={() => setIsStatsOpen(false)} />
+      <PasswordGeneratorModal isOpen={isGeneratorOpen} onClose={() => setIsGeneratorOpen(false)} />
 
       <ToastContainer
         position="bottom-right"

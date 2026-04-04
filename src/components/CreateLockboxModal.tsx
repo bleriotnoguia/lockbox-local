@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
-import { Plus, ChevronDown, ChevronUp, Info } from 'lucide-react';
+import { Plus, ChevronDown, ChevronUp, Info, Wand2 } from 'lucide-react';
 import { Modal } from './ui/Modal';
 import { Button } from './ui/Button';
 import { Input, TextArea } from './ui/Input';
@@ -8,6 +8,7 @@ import { Select } from './ui/Select';
 import { Tooltip } from './ui/Tooltip';
 import { TagInput } from './ui/TagInput';
 import { DateTimePicker } from './ui/DateTimePicker';
+import { PasswordGeneratorModal } from './PasswordGeneratorModal';
 import { useLockboxStore } from '../store';
 import { useTranslation } from '../i18n';
 import { CATEGORIES, serializeTags } from '../types';
@@ -108,6 +109,8 @@ export const CreateLockboxModal: React.FC<CreateLockboxModalProps> = ({ isOpen, 
   const [scheduledEnabled, setScheduledEnabled] = useState(false);
   const [scheduledDateTime, setScheduledDateTime] = useState('');
 
+  const [isGeneratorOpen, setIsGeneratorOpen] = useState(false);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [validationError, setValidationError] = useState('');
 
@@ -120,6 +123,7 @@ export const CreateLockboxModal: React.FC<CreateLockboxModalProps> = ({ isOpen, 
     setTags([]);
     setPanicCode('');
     setScheduledEnabled(false); setScheduledDateTime('');
+    setIsGeneratorOpen(false);
     setValidationError('');
   };
 
@@ -203,14 +207,28 @@ export const CreateLockboxModal: React.FC<CreateLockboxModalProps> = ({ isOpen, 
           required
         />
 
-        <TextArea
-          label={t('createLockbox.content')}
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder={t('createLockbox.contentPlaceholder')}
-          rows={3}
-          required
-        />
+        <div>
+          <div className="flex items-center justify-between mb-1">
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              {t('createLockbox.content')}
+            </label>
+            <button
+              type="button"
+              onClick={() => setIsGeneratorOpen(true)}
+              className="flex items-center gap-1 text-xs text-primary-600 dark:text-primary-400 hover:underline"
+            >
+              <Wand2 className="h-3.5 w-3.5" />
+              {t('createLockbox.generatePassword')}
+            </button>
+          </div>
+          <TextArea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder={t('createLockbox.contentPlaceholder')}
+            rows={3}
+            required
+          />
+        </div>
 
         <Select
           label={t('createLockbox.category')}
@@ -363,6 +381,13 @@ export const CreateLockboxModal: React.FC<CreateLockboxModalProps> = ({ isOpen, 
           </Button>
         </div>
       </form>
+
+      <PasswordGeneratorModal
+        isOpen={isGeneratorOpen}
+        onClose={() => setIsGeneratorOpen(false)}
+        onUse={(pw) => setContent(pw)}
+        layer="high"
+      />
     </Modal>
   );
 };
