@@ -520,6 +520,22 @@ Vous pouvez ajouter ces scripts dans `package.json` :
 | Format d'export | .lbf (texte) | .json (signé HMAC) |
 | Localisation EN/FR | Non | Oui |
 
+## Version mobile
+
+Lockbox Local est également disponible en tant qu'application mobile native pour **iOS et Android**.
+
+| | |
+|---|---|
+| **Dépôt** | [github.com/bleriotnoguia/lockbox-local-mobile](https://github.com/bleriotnoguia/lockbox-local-mobile) |
+| **Releases** | [Dernière version](https://github.com/bleriotnoguia/lockbox-local-mobile/releases/latest) |
+
+La version mobile partage le même format de chiffrement, les mêmes signatures HMAC et le même schéma de données que cette version desktop — les fichiers d'export sont entièrement compatibles entre les deux plateformes.
+
+**Fonctionnalités supplémentaires de la version mobile :**
+- Déverrouillage biométrique (Face ID / Empreinte digitale)
+- Notifications push locales à la fin d'un countdown de déverrouillage
+- Construite avec Expo SDK 54 + React Native + NativeWind
+
 ## Licence
 
 Ce projet est sous licence MIT - Voir le fichier [LICENSE](LICENSE) pour plus de détails.
