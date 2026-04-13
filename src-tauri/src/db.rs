@@ -54,16 +54,20 @@ pub struct UpdateLockboxRequest {
     pub name: Option<String>,
     pub content: Option<String>,
     pub category: Option<String>,
+    pub clear_category: bool,
     pub unlock_delay_seconds: Option<i64>,
     pub relock_delay_seconds: Option<i64>,
     pub reflection_enabled: Option<bool>,
     pub reflection_message: Option<String>,
+    pub clear_reflection_message: bool,
     pub reflection_checklist: Option<String>,
+    pub clear_reflection_checklist: bool,
     pub penalty_enabled: Option<bool>,
     pub penalty_seconds: Option<i64>,
     pub panic_code_hash: Option<String>,
     pub scheduled_unlock_at: Option<i64>,
     pub tags: Option<String>,
+    pub clear_tags: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -263,6 +267,11 @@ impl Database {
         let now = chrono::Utc::now().timestamp_millis();
         let current = self.get_lockbox(req.id)?.ok_or(rusqlite::Error::QueryReturnedNoRows)?;
 
+        let category = if req.clear_category { None } else { req.category.or(current.category) };
+        let reflection_message = if req.clear_reflection_message { None } else { req.reflection_message.or(current.reflection_message) };
+        let reflection_checklist = if req.clear_reflection_checklist { None } else { req.reflection_checklist.or(current.reflection_checklist) };
+        let tags = if req.clear_tags { None } else { req.tags.or(current.tags) };
+
         self.conn.execute(
             "UPDATE lockboxes SET
                 name = ?1, content = ?2, category = ?3,
@@ -274,22 +283,23 @@ impl Database {
             params![
                 req.name.unwrap_or(current.name),
                 req.content.unwrap_or(current.content),
-                req.category.or(current.category),
+                category,
                 req.unlock_delay_seconds.unwrap_or(current.unlock_delay_seconds),
                 req.relock_delay_seconds.unwrap_or(current.relock_delay_seconds),
                 req.reflection_enabled.unwrap_or(current.reflection_enabled) as i32,
-                req.reflection_message.or(current.reflection_message),
-                req.reflection_checklist.or(current.reflection_checklist),
+                reflection_message,
+                reflection_checklist,
                 req.penalty_enabled.unwrap_or(current.penalty_enabled) as i32,
                 req.penalty_seconds.unwrap_or(current.penalty_seconds),
                 req.panic_code_hash.or(current.panic_code_hash),
                 req.scheduled_unlock_at.or(current.scheduled_unlock_at),
-                req.tags.or(current.tags),
+                tags,
                 now,
                 req.id,
             ],
         )?;
 
+        self.log_access_event(req.id, "field_updated")?;
         self.get_lockbox(req.id)?.ok_or(rusqlite::Error::QueryReturnedNoRows)
     }
 
@@ -382,6 +392,7 @@ impl Database {
             params![now, id],
         )?;
 
+        self.log_access_event(id, "relock_manual")?;
         self.get_lockbox(id)?.ok_or(rusqlite::Error::QueryReturnedNoRows)
     }
 
@@ -494,7 +505,15 @@ impl Database {
     pub fn check_and_update_states(&self) -> Result<Vec<Lockbox>> {
         let now = chrono::Utc::now().timestamp_millis();
 
-        // Complete unlocks for countdown-based unlocking (unlock_timestamp reached)
+        // Collect IDs that will complete countdown-based unlock
+        let countdown_ids: Vec<i64> = {
+            let mut stmt = self.conn.prepare(
+                "SELECT id FROM lockboxes WHERE is_locked = 1 AND unlock_timestamp IS NOT NULL AND unlock_timestamp <= ?1"
+            )?;
+            let ids: Vec<i64> = stmt.query_map(params![now], |row| row.get(0))?.filter_map(|r| r.ok()).collect();
+            ids
+        };
+
         self.conn.execute(
             "UPDATE lockboxes
              SET is_locked = 0,
@@ -505,7 +524,19 @@ impl Database {
             params![now],
         )?;
 
-        // Complete unlocks for scheduled unlock (scheduled_unlock_at reached)
+        for id in countdown_ids {
+            let _ = self.log_access_event(id, "unlock_completed");
+        }
+
+        // Collect IDs that will complete scheduled unlock
+        let scheduled_ids: Vec<i64> = {
+            let mut stmt = self.conn.prepare(
+                "SELECT id FROM lockboxes WHERE is_locked = 1 AND scheduled_unlock_at IS NOT NULL AND scheduled_unlock_at <= ?1 AND unlock_timestamp IS NULL"
+            )?;
+            let ids: Vec<i64> = stmt.query_map(params![now], |row| row.get(0))?.filter_map(|r| r.ok()).collect();
+            ids
+        };
+
         self.conn.execute(
             "UPDATE lockboxes
              SET is_locked = 0,
@@ -517,7 +548,19 @@ impl Database {
             params![now],
         )?;
 
-        // Relock boxes whose relock_timestamp has passed
+        for id in scheduled_ids {
+            let _ = self.log_access_event(id, "scheduled_unlock_completed");
+        }
+
+        // Collect IDs that will auto-relock
+        let relock_ids: Vec<i64> = {
+            let mut stmt = self.conn.prepare(
+                "SELECT id FROM lockboxes WHERE is_locked = 0 AND relock_timestamp IS NOT NULL AND relock_timestamp <= ?1"
+            )?;
+            let ids: Vec<i64> = stmt.query_map(params![now], |row| row.get(0))?.filter_map(|r| r.ok()).collect();
+            ids
+        };
+
         self.conn.execute(
             "UPDATE lockboxes
              SET is_locked = 1,
@@ -526,6 +569,10 @@ impl Database {
              WHERE is_locked = 0 AND relock_timestamp IS NOT NULL AND relock_timestamp <= ?1",
             params![now],
         )?;
+
+        for id in relock_ids {
+            let _ = self.log_access_event(id, "auto_relocked");
+        }
 
         self.get_all_lockboxes()
     }

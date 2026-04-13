@@ -142,16 +142,20 @@ pub fn update_lockbox(
     name: Option<String>,
     content: Option<String>,
     category: Option<String>,
+    clear_category: Option<bool>,
     unlock_delay_seconds: Option<i64>,
     relock_delay_seconds: Option<i64>,
     reflection_enabled: Option<bool>,
     reflection_message: Option<String>,
+    clear_reflection_message: Option<bool>,
     reflection_checklist: Option<String>,
+    clear_reflection_checklist: Option<bool>,
     penalty_enabled: Option<bool>,
     penalty_seconds: Option<i64>,
     panic_code: Option<String>,
     scheduled_unlock_at: Option<i64>,
     tags: Option<String>,
+    clear_tags: Option<bool>,
     state: State<AppState>,
 ) -> Result<Lockbox, String> {
     let encrypted_content = if let Some(c) = content {
@@ -171,21 +175,66 @@ pub fn update_lockbox(
     let panic_code_hash = panic_code.map(|c| crypto::hash_password(&c));
 
     let db = state.db.lock().map_err(|e| e.to_string())?;
+
+    // Validate state-based edit restrictions
+    let current = db.get_lockbox(id).map_err(|e| e.to_string())?
+        .ok_or_else(|| "Lockbox not found".to_string())?;
+
+    let now_ms = chrono::Utc::now().timestamp_millis();
+    let is_effectively_locked = current.is_locked || current.unlock_timestamp.is_some();
+
+    if is_effectively_locked {
+        if encrypted_content.is_some() {
+            return Err("Cannot edit content while locked".to_string());
+        }
+        if let Some(new_delay) = unlock_delay_seconds {
+            if new_delay < current.unlock_delay_seconds {
+                return Err("Cannot reduce unlock delay while locked".to_string());
+            }
+        }
+        if let Some(new_delay) = relock_delay_seconds {
+            if new_delay < current.relock_delay_seconds {
+                return Err("Cannot reduce relock delay while locked".to_string());
+            }
+        }
+        if panic_code_hash.is_some() {
+            return Err("Cannot change emergency code while locked".to_string());
+        }
+        if scheduled_unlock_at.is_some() {
+            return Err("Cannot set or modify scheduled unlock while locked".to_string());
+        }
+    } else if let Some(scheduled_ts) = scheduled_unlock_at {
+        // Box is in scheduled state (no countdown): only allow pushing date further
+        if let Some(current_scheduled) = current.scheduled_unlock_at {
+            if scheduled_ts < current_scheduled {
+                return Err("Cannot move scheduled unlock to an earlier date".to_string());
+            }
+        }
+        // Prevent setting a date in the past
+        if scheduled_ts <= now_ms {
+            return Err("Scheduled unlock date must be in the future".to_string());
+        }
+    }
+
     db.update_lockbox(UpdateLockboxRequest {
         id,
         name,
         content: encrypted_content,
         category,
+        clear_category: clear_category.unwrap_or(false),
         unlock_delay_seconds,
         relock_delay_seconds,
         reflection_enabled,
         reflection_message,
+        clear_reflection_message: clear_reflection_message.unwrap_or(false),
         reflection_checklist,
+        clear_reflection_checklist: clear_reflection_checklist.unwrap_or(false),
         penalty_enabled,
         penalty_seconds,
         panic_code_hash,
         scheduled_unlock_at,
         tags,
+        clear_tags: clear_tags.unwrap_or(false),
     })
     .map_err(|e| e.to_string())
 }

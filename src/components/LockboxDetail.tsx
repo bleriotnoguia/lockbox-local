@@ -19,6 +19,7 @@ import {
   AlertTriangle,
   RotateCcw,
   Info,
+  Pencil,
 } from "lucide-react";
 import { clsx } from "clsx";
 import type { Lockbox, AccessLogEntry } from "../types";
@@ -36,6 +37,7 @@ import {
 import { useTranslation } from "../i18n";
 import { ReflectionModal } from "./ReflectionModal";
 import { ExtendDelayModal } from "./ExtendDelayModal";
+import { EditLockboxModal } from "./EditLockboxModal";
 
 interface LockboxDetailProps {
   lockbox: Lockbox;
@@ -60,12 +62,17 @@ export const LockboxDetail: React.FC<LockboxDetailProps> = ({
   const [accessLog, setAccessLog] = useState<AccessLogEntry[]>([]);
   const [decryptedContent, setDecryptedContent] = useState<string | null>(null);
   const [isLoadingContent, setIsLoadingContent] = useState(false);
+  const [showResetPanic, setShowResetPanic] = useState(false);
+  const [newPanicCode, setNewPanicCode] = useState("");
+  const [isResettingPanic, setIsResettingPanic] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
 
   const {
     unlockLockbox,
     cancelUnlock,
     extendUnlockDelay,
     usePanicCode,
+    resetPanicCode,
     relockLockbox,
     deleteLockbox,
     fetchLockboxDecrypted,
@@ -75,18 +82,20 @@ export const LockboxDetail: React.FC<LockboxDetailProps> = ({
   const status = useLockboxStatus(lockbox);
   const { t, formatDelay } = useTranslation();
 
-  // Fetch decrypted content when unlocked
+  // Fetch decrypted content when unlocked, or when lockbox is updated while unlocked
   useEffect(() => {
-    if (status === "unlocked" && !decryptedContent) {
+    if (status === "unlocked") {
       setIsLoadingContent(true);
       fetchLockboxDecrypted(lockbox.id).then((lb) => {
         if (lb) setDecryptedContent(lb.content);
         setIsLoadingContent(false);
       });
-    } else if (status !== "unlocked") {
+    } else {
       setDecryptedContent(null);
     }
-  }, [status, lockbox.id, fetchLockboxDecrypted, decryptedContent]);
+  // lockbox.updated_at ensures we re-fetch when content is edited, without re-running on every checkAndUpdateStates tick
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status, lockbox.id, lockbox.updated_at, fetchLockboxDecrypted]);
 
   // Fetch access log when section opens
   useEffect(() => {
@@ -183,6 +192,20 @@ export const LockboxDetail: React.FC<LockboxDetailProps> = ({
       }
     } catch {
       setPanicError(t("lockboxDetail.panicCodeInvalid"));
+    }
+  };
+
+  const handleResetPanicCode = async () => {
+    setIsResettingPanic(true);
+    try {
+      await resetPanicCode(lockbox.id, newPanicCode.trim() || undefined);
+      toast.success(t("lockboxDetail.panicCodeResetSuccess"));
+      setShowResetPanic(false);
+      setNewPanicCode("");
+    } catch {
+      toast.error(t("lockboxDetail.panicCodeResetError"));
+    } finally {
+      setIsResettingPanic(false);
     }
   };
 
@@ -368,7 +391,7 @@ export const LockboxDetail: React.FC<LockboxDetailProps> = ({
 
         <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-xl min-h-[100px] flex flex-col">
           {isUnlocked ? (
-            isLoadingContent ? (
+            (isLoadingContent || !decryptedContent) ? (
               <div className="flex flex-1 min-h-[60px] items-center justify-center text-gray-500 dark:text-gray-400">
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary-500 mr-2" />
                 <span>{t("lockboxDetail.decrypting")}</span>
@@ -380,7 +403,7 @@ export const LockboxDetail: React.FC<LockboxDetailProps> = ({
                   !showContent && "blur-sm select-none",
                 )}
               >
-                {displayContent}
+                {decryptedContent}
               </p>
             )
           ) : (
@@ -440,7 +463,7 @@ export const LockboxDetail: React.FC<LockboxDetailProps> = ({
         )}
       </div>
 
-      {/* Emergency panic code */}
+      {/* Emergency panic code — use while locked/unlocking/scheduled */}
       {lockbox.panic_code_hash && !isUnlocked && (
         <div className="relative z-20 mb-4">
           {!lockbox.panic_code_used ? (
@@ -506,6 +529,52 @@ export const LockboxDetail: React.FC<LockboxDetailProps> = ({
         </div>
       )}
 
+      {/* Reset panic code — only when unlocked and code was used */}
+      {isUnlocked && lockbox.panic_code_hash && lockbox.panic_code_used && (
+        <div className="mb-4 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+          <button
+            onClick={() => setShowResetPanic(!showResetPanic)}
+            className={clsx(
+              "w-full flex items-center justify-between px-3 py-2.5 bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-sm",
+            )}
+          >
+            <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300 font-medium">
+              <Zap className="h-4 w-4 text-orange-500" />
+              <span>{t("lockboxDetail.resetPanicCode")}</span>
+            </div>
+            {showResetPanic ? (
+              <ChevronUp className="h-4 w-4 text-gray-400" />
+            ) : (
+              <ChevronDown className="h-4 w-4 text-gray-400" />
+            )}
+          </button>
+          {showResetPanic && (
+            <div className="p-3 space-y-2 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                {t("lockboxDetail.resetPanicCodeHint")}
+              </p>
+              <div className="flex gap-2">
+                <input
+                  type="password"
+                  value={newPanicCode}
+                  onChange={(e) => setNewPanicCode(e.target.value)}
+                  placeholder={t("lockboxDetail.resetPanicCodePlaceholder")}
+                  className="flex-1 px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  onKeyDown={(e) => e.key === "Enter" && handleResetPanicCode()}
+                />
+                <button
+                  onClick={handleResetPanicCode}
+                  disabled={isResettingPanic}
+                  className="shrink-0 px-3 py-1.5 text-sm font-semibold rounded-lg bg-primary-600 hover:bg-primary-700 active:bg-primary-800 text-white transition-colors shadow-sm disabled:opacity-50"
+                >
+                  {t("lockboxDetail.resetPanicCodeConfirm")}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Actions */}
       <div className="flex gap-2 mt-auto">
         {status === "locked" && (
@@ -559,6 +628,12 @@ export const LockboxDetail: React.FC<LockboxDetailProps> = ({
             {t("lockboxDetail.relockNow")}
           </Button>
         )}
+
+        <Tooltip content={t("lockboxDetail.editTooltip")} position="left">
+          <Button variant="secondary" onClick={() => setShowEdit(true)}>
+            <Pencil className="h-4 w-4" />
+          </Button>
+        </Tooltip>
 
         <Button variant="danger" onClick={() => setShowDeleteConfirm(true)}>
           <Trash2 className="h-4 w-4" />
@@ -661,6 +736,12 @@ export const LockboxDetail: React.FC<LockboxDetailProps> = ({
         onClose={() => setShowExtendDelay(false)}
         onConfirm={handleExtendDelay}
         currentDelaySeconds={lockbox.unlock_delay_seconds}
+      />
+
+      <EditLockboxModal
+        isOpen={showEdit}
+        onClose={() => setShowEdit(false)}
+        lockbox={lockbox}
       />
     </div>
   );

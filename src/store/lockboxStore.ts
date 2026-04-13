@@ -94,7 +94,12 @@ export const useLockboxStore = create<LockboxState>((set, get) => ({
     }
   },
 
-  updateLockbox: async (id: number, updates: Partial<CreateLockboxInput>) => {
+  updateLockbox: async (id: number, updates: Partial<CreateLockboxInput> & {
+    clear_category?: boolean;
+    clear_tags?: boolean;
+    clear_reflection_message?: boolean;
+    clear_reflection_checklist?: boolean;
+  }) => {
     set({ isLoading: true, error: null });
     try {
       const lockbox = await invoke<Lockbox>('update_lockbox', {
@@ -102,16 +107,20 @@ export const useLockboxStore = create<LockboxState>((set, get) => ({
         name: updates.name,
         content: updates.content,
         category: updates.category,
+        clearCategory: updates.clear_category ?? false,
         unlockDelaySeconds: updates.unlock_delay_seconds,
         relockDelaySeconds: updates.relock_delay_seconds,
         reflectionEnabled: updates.reflection_enabled,
         reflectionMessage: updates.reflection_message,
+        clearReflectionMessage: updates.clear_reflection_message ?? false,
         reflectionChecklist: updates.reflection_checklist,
+        clearReflectionChecklist: updates.clear_reflection_checklist ?? false,
         penaltyEnabled: updates.penalty_enabled,
         penaltySeconds: updates.penalty_seconds,
         panicCode: updates.panic_code,
         scheduledUnlockAt: updates.scheduled_unlock_at,
         tags: updates.tags,
+        clearTags: updates.clear_tags ?? false,
       });
       set((state) => ({
         lockboxes: state.lockboxes.map((lb) => (lb.id === id ? lockbox : lb)),

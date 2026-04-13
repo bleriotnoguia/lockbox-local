@@ -32,19 +32,21 @@ export function useTranslation() {
   const formatDelay = useCallback(
     (seconds: number): string => {
       const tk = (k: string) => t(k);
-      if (seconds < 60) {
-        return `${seconds} ${seconds > 1 ? tk('time.seconds') : tk('time.second')}`;
-      }
-      if (seconds < 3600) {
-        const m = Math.floor(seconds / 60);
-        return `${m} ${m > 1 ? tk('time.minutes') : tk('time.minute')}`;
-      }
-      if (seconds < 86400) {
-        const h = Math.floor(seconds / 3600);
-        return `${h} ${h > 1 ? tk('time.hours') : tk('time.hour')}`;
-      }
+      const parts: string[] = [];
+
       const d = Math.floor(seconds / 86400);
-      return `${d} ${d > 1 ? tk('time.days') : tk('time.day')}`;
+      const h = Math.floor((seconds % 86400) / 3600);
+      const m = Math.floor((seconds % 3600) / 60);
+      const s = seconds % 60;
+
+      if (d > 0) parts.push(`${d} ${d > 1 ? tk('time.days') : tk('time.day')}`);
+      if (h > 0) parts.push(`${h} ${h > 1 ? tk('time.hours') : tk('time.hour')}`);
+      if (m > 0) parts.push(`${m} ${m > 1 ? tk('time.minutes') : tk('time.minute')}`);
+      if (s > 0 && d === 0) parts.push(`${s} ${s > 1 ? tk('time.seconds') : tk('time.second')}`);
+
+      if (parts.length === 0) parts.push(`0 ${tk('time.seconds')}`);
+
+      return parts.join(' ');
     },
     [t]
   );
