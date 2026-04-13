@@ -1,6 +1,6 @@
 {
   "name": "lockbox-local",
-  "version": "2.3.0",
+  "version": "2.5.1",
   "description": "A secure, delay-based password and information storage application",
   "type": "module",
   "scripts": {

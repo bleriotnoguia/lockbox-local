@@ -18,7 +18,7 @@ interface AboutModalProps {
   onClose: () => void;
 }
 
-const APP_VERSION = "2.3.0";
+const APP_VERSION = "2.5.1";
 const GITHUB_URL = "https://github.com/bleriotnoguia/lockbox-local";
 const BUG_URL = "https://github.com/bleriotnoguia/lockbox-local/issues";
 const BUY_ME_COFFEE_URL = "https://ko-fi.com/bleriotnoguia";
