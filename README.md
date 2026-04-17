@@ -25,9 +25,7 @@ Pluckeye Lockbox has been around for years, but it's a free service run by a sin
 
 If you stored a critical password in Pluckeye Lockbox and the server crashed with all data lost, you'd be permanently locked out. **Lockbox Local solves this** by keeping everything on your own machine — no cloud dependency, no risk of service shutdown, and **boxes never self-destruct**.
 
-### What changed from [v1 (Java)](https://github.com/japierreSWE/Lockbox_Local)?
-
-The original Lockbox Local was built with Java and SQLite. This **v2** is a complete rewrite using modern technologies (Tauri 2.0 + React 19 + Rust), bringing AES-256-GCM encryption, a master password, categories, search, theming, and a much smaller footprint (see [comparison table](#comparison-with-v1-java) below).
+> **Mobile version also available** — see [github.com/bleriotnoguia/lockbox-local-mobile](https://github.com/bleriotnoguia/lockbox-local-mobile) for Android and iOS.
 
 ## Features
 
