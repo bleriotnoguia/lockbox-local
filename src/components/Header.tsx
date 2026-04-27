@@ -114,12 +114,8 @@ export const Header: React.FC<HeaderProps> = ({ onCreateClick, onAboutClick, onD
       <div className="flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center gap-3 shrink-0">
-          <div className="p-2 bg-primary-100 dark:bg-primary-900/30 rounded-xl">
-            <svg className="h-8 w-8 text-primary-600 dark:text-primary-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
-              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-              <circle cx="12" cy="16" r="1" />
-            </svg>
+          <div className="h-12 w-12 bg-primary-100 dark:bg-primary-900/30 rounded-xl overflow-hidden">
+            <img src="/lockbox-logo.png" alt="Lockbox Local logo" className="h-full w-full object-cover" />
           </div>
           <div>
             <h1 className="text-xl font-bold text-gray-900 dark:text-white">Lockbox Local</h1>

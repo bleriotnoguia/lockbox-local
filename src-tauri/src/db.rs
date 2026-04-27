@@ -1,6 +1,11 @@
 use rusqlite::{Connection, Result, params};
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
+use std::time::Instant;
+
+const CLOCK_TAMPER_THRESHOLD_MS: i64 = 120_000;
+const LAST_WALL_CLOCK_MS_KEY: &str = "clock_last_wall_ms";
+const LAST_MONOTONIC_MS_KEY: &str = "clock_last_monotonic_ms";
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Lockbox {
@@ -83,6 +88,65 @@ pub struct Database {
 }
 
 impl Database {
+    fn monotonic_now_ms() -> i64 {
+        static START: std::sync::OnceLock<Instant> = std::sync::OnceLock::new();
+        let start = START.get_or_init(Instant::now);
+        start.elapsed().as_millis() as i64
+    }
+
+    fn detect_clock_tampering(&self, now_wall_ms: i64, now_monotonic_ms: i64) -> Result<bool> {
+        let previous_wall = self
+            .get_setting(LAST_WALL_CLOCK_MS_KEY)?
+            .and_then(|v| v.parse::<i64>().ok());
+        let previous_monotonic = self
+            .get_setting(LAST_MONOTONIC_MS_KEY)?
+            .and_then(|v| v.parse::<i64>().ok());
+
+        self.set_setting(LAST_WALL_CLOCK_MS_KEY, &now_wall_ms.to_string())?;
+        self.set_setting(LAST_MONOTONIC_MS_KEY, &now_monotonic_ms.to_string())?;
+
+        let (Some(prev_wall), Some(prev_mono)) = (previous_wall, previous_monotonic) else {
+            return Ok(false);
+        };
+
+        let wall_delta = now_wall_ms - prev_wall;
+        let monotonic_delta = now_monotonic_ms - prev_mono;
+        let drift = (wall_delta - monotonic_delta).abs();
+
+        Ok(wall_delta < 0 || drift > CLOCK_TAMPER_THRESHOLD_MS)
+    }
+
+    fn handle_clock_tampering(&self, now: i64) -> Result<()> {
+        let affected_ids: Vec<i64> = {
+            let mut stmt = self.conn.prepare(
+                "SELECT id FROM lockboxes
+                 WHERE is_locked = 0 OR unlock_timestamp IS NOT NULL OR scheduled_unlock_at IS NOT NULL",
+            )?;
+            let ids: Vec<i64> = stmt
+                .query_map([], |row| row.get(0))?
+                .filter_map(|r| r.ok())
+                .collect();
+            ids
+        };
+
+        self.conn.execute(
+            "UPDATE lockboxes
+             SET is_locked = 1,
+                 unlock_timestamp = NULL,
+                 relock_timestamp = NULL,
+                 scheduled_unlock_at = NULL,
+                 updated_at = ?1
+             WHERE is_locked = 0 OR unlock_timestamp IS NOT NULL OR scheduled_unlock_at IS NOT NULL",
+            params![now],
+        )?;
+
+        for id in affected_ids {
+            let _ = self.log_access_event(id, "clock_tamper_detected");
+        }
+
+        Ok(())
+    }
+
     pub fn new() -> Result<Self> {
         let db_path = Self::get_db_path();
 
@@ -504,6 +568,12 @@ impl Database {
 
     pub fn check_and_update_states(&self) -> Result<Vec<Lockbox>> {
         let now = chrono::Utc::now().timestamp_millis();
+        let now_monotonic = Self::monotonic_now_ms();
+
+        if self.detect_clock_tampering(now, now_monotonic)? {
+            self.handle_clock_tampering(now)?;
+            return self.get_all_lockboxes();
+        }
 
         // Collect IDs that will complete countdown-based unlock
         let countdown_ids: Vec<i64> = {

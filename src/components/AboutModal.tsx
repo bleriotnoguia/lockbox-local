@@ -1,13 +1,5 @@
 import React, { useState } from "react";
-import {
-  Github,
-  Coffee,
-  Copy,
-  ExternalLink,
-  Heart,
-  Shield,
-  X,
-} from "lucide-react";
+import { Github, Coffee, Copy, ExternalLink, Heart, X } from "lucide-react";
 import { toast } from "react-toastify";
 import { open } from "@tauri-apps/plugin-shell";
 import { Modal } from "./ui/Modal";
@@ -18,7 +10,7 @@ interface AboutModalProps {
   onClose: () => void;
 }
 
-const APP_VERSION = "2.5.1";
+const APP_VERSION = "2.5.3";
 const GITHUB_URL = "https://github.com/bleriotnoguia/lockbox-local";
 const BUG_URL = "https://github.com/bleriotnoguia/lockbox-local/issues";
 const BUY_ME_COFFEE_URL = "https://ko-fi.com/bleriotnoguia";
@@ -81,8 +73,12 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
       <div className="space-y-5">
         {/* App info */}
         <div className="flex items-center gap-4">
-          <div className="p-3 bg-primary-100 dark:bg-primary-900/30 rounded-xl">
-            <Shield className="h-8 w-8 text-primary-600 dark:text-primary-400" />
+          <div className="h-14 w-14 bg-primary-100 dark:bg-primary-900/30 rounded-xl overflow-hidden">
+            <img
+              src="/lockbox-logo.png"
+              alt="Lockbox Local logo"
+              className="h-full w-full object-cover"
+            />
           </div>
           <div>
             <h3 className="font-bold text-gray-900 dark:text-white text-lg">

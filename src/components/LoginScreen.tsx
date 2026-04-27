@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Lock, Eye, EyeOff, Shield, AlertTriangle } from 'lucide-react';
+import { Lock, Eye, EyeOff, AlertTriangle } from 'lucide-react';
 import { Button } from './ui/Button';
 import { Input } from './ui/Input';
 import { Modal } from './ui/Modal';
@@ -89,8 +89,8 @@ export const LoginScreen: React.FC = () => {
 
         {/* Logo */}
         <div className="flex flex-col items-center mb-8">
-          <div className="p-4 bg-primary-100 dark:bg-primary-900/30 rounded-2xl mb-4">
-            <Shield className="h-12 w-12 text-primary-600 dark:text-primary-400" />
+          <div className="h-20 w-20 bg-primary-100 dark:bg-primary-900/30 rounded-2xl mb-4 overflow-hidden">
+            <img src="/lockbox-logo.png" alt="Lockbox Local logo" className="h-full w-full object-cover" />
           </div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             Lockbox Local
