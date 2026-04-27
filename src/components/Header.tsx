@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
+import { open } from '@tauri-apps/plugin-shell';
 import {
   Plus,
   Search,
   Download,
   Upload,
+  Copy,
+  ExternalLink,
   Sun,
   Moon,
   Monitor,
@@ -31,6 +34,7 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ onCreateClick, onAboutClick, onDocsClick, onStatsClick, onGeneratorClick }) => {
+  const proUrl = 'https://lockbox.javascript.cm/';
   const { searchQuery, setSearchQuery } = useLockboxStore();
   const { theme, setTheme } = useThemeStore();
   const { t, locale, setLocale } = useTranslation();
@@ -109,6 +113,23 @@ export const Header: React.FC<HeaderProps> = ({ onCreateClick, onAboutClick, onD
     </button>
   );
 
+  const openProPage = async () => {
+    try {
+      await open(proUrl);
+    } catch {
+      window.open(proUrl, '_blank', 'noopener,noreferrer');
+    }
+  };
+
+  const copyProUrl = async () => {
+    try {
+      await navigator.clipboard.writeText(proUrl);
+      toast.success('Pro link copied');
+    } catch {
+      toast.error('Failed to copy link');
+    }
+  };
+
   return (
     <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
       <div className="flex items-center justify-between">
@@ -119,7 +140,26 @@ export const Header: React.FC<HeaderProps> = ({ onCreateClick, onAboutClick, onD
           </div>
           <div>
             <h1 className="text-xl font-bold text-gray-900 dark:text-white">Lockbox Local</h1>
-            <p className="text-xs text-gray-500 dark:text-gray-400">{t('header.subtitle')}</p>
+            <div className="flex items-center gap-2">
+              <p className="text-xs text-gray-500 dark:text-gray-400">{t('header.subtitle')}</p>
+              <button
+                type="button"
+                onClick={openProPage}
+                className="inline-flex items-center gap-1 rounded-full border border-primary-200 bg-primary-50 px-2 py-0.5 text-[11px] font-semibold text-primary-700 transition-colors hover:bg-primary-100 dark:border-primary-700/60 dark:bg-primary-900/30 dark:text-primary-300 dark:hover:bg-primary-900/50"
+                title="Open Lockbox Pro website"
+              >
+                PRO
+                <ExternalLink className="h-3 w-3" />
+              </button>
+              <button
+                type="button"
+                onClick={copyProUrl}
+                className="rounded-md p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:text-gray-500 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+                title="Copy Pro link"
+              >
+                <Copy className="h-3.5 w-3.5" />
+              </button>
+            </div>
           </div>
         </div>
 

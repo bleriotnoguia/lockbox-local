@@ -68,6 +68,15 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
     }
   };
 
+  const copyBuyMeCoffeeLink = async () => {
+    try {
+      await navigator.clipboard.writeText(BUY_ME_COFFEE_URL);
+      toast.success("Buy me a coffee link copied");
+    } catch {
+      toast.error("Failed to copy link");
+    }
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={t("about.title")} size="md">
       <div className="space-y-5">
@@ -154,14 +163,23 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
           <p className="text-sm text-gray-600 dark:text-gray-400">
             {t("about.supportDescription")}
           </p>
-          <button
-            onClick={() => openExternal(BUY_ME_COFFEE_URL)}
-            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-yellow-800 bg-yellow-100 dark:bg-yellow-900/30 dark:text-yellow-300 rounded-lg hover:bg-yellow-200 dark:hover:bg-yellow-900/50 transition-colors"
-          >
-            <Coffee className="h-4 w-4" />
-            {t("about.buyMeCoffee")}
-            <ExternalLink className="h-3 w-3 opacity-50 ml-auto" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => openExternal(BUY_ME_COFFEE_URL)}
+              className="flex-1 flex items-center gap-2 px-4 py-2 text-sm font-medium text-yellow-800 bg-yellow-100 dark:bg-yellow-900/30 dark:text-yellow-300 rounded-lg hover:bg-yellow-200 dark:hover:bg-yellow-900/50 transition-colors"
+            >
+              <Coffee className="h-4 w-4" />
+              {t("about.buyMeCoffee")}
+              <ExternalLink className="h-3 w-3 opacity-50 ml-auto" />
+            </button>
+            <button
+              onClick={copyBuyMeCoffeeLink}
+              className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors shrink-0"
+              title="Copy Buy me a coffee link"
+            >
+              <Copy className="h-4 w-4" />
+            </button>
+          </div>
 
           <button
             onClick={() => setShowCrypto(!showCrypto)}
