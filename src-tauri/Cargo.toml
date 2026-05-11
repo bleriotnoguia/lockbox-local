@@ -30,7 +30,7 @@ pbkdf2 = "0.12"
 hex = "0.4"
 thiserror = "2.0"
 dirs = "5.0"
-sysinfo = { version = "0.31", default-features = false }
+sysinfo = { version = "0.31", default-features = false, features = ["system"] }
 
 [features]
 default = []
