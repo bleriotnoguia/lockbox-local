@@ -1,11 +1,13 @@
 use rusqlite::{Connection, Result, params};
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::Instant;
 
 const CLOCK_TAMPER_THRESHOLD_MS: i64 = 120_000;
 const LAST_WALL_CLOCK_MS_KEY: &str = "clock_last_wall_ms";
 const LAST_MONOTONIC_MS_KEY: &str = "clock_last_monotonic_ms";
+const LAST_BOOT_UPTIME_MS_KEY: &str = "clock_last_boot_uptime_ms";
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Lockbox {
@@ -83,6 +85,28 @@ pub struct AccessLogEntry {
     pub timestamp: i64,
 }
 
+static FIRST_TICK: AtomicBool = AtomicBool::new(true);
+
+#[cfg(target_os = "linux")]
+fn uptime_ms_since_boot() -> Option<u64> {
+    // /proc/uptime: first field is seconds since boot, including suspended time.
+    let content = std::fs::read_to_string("/proc/uptime").ok()?;
+    let secs: f64 = content.split_whitespace().next()?.parse().ok()?;
+    Some((secs * 1000.0) as u64)
+}
+
+#[cfg(target_os = "macos")]
+fn uptime_ms_since_boot() -> Option<u64> {
+    // sysinfo uses kern.boottime which includes sleep time on macOS.
+    Some(sysinfo::System::uptime() * 1000)
+}
+
+// Windows: GetTickCount64 excludes suspended time — Phase 2 skipped on this platform.
+#[cfg(not(any(target_os = "linux", target_os = "macos")))]
+fn uptime_ms_since_boot() -> Option<u64> {
+    None
+}
+
 pub struct Database {
     conn: Connection,
 }
@@ -101,19 +125,56 @@ impl Database {
         let previous_monotonic = self
             .get_setting(LAST_MONOTONIC_MS_KEY)?
             .and_then(|v| v.parse::<i64>().ok());
+        let previous_uptime = self
+            .get_setting(LAST_BOOT_UPTIME_MS_KEY)?
+            .and_then(|v| v.parse::<u64>().ok());
+
+        let is_first_tick = FIRST_TICK.swap(false, Ordering::Relaxed);
+        let now_uptime = uptime_ms_since_boot();
 
         self.set_setting(LAST_WALL_CLOCK_MS_KEY, &now_wall_ms.to_string())?;
         self.set_setting(LAST_MONOTONIC_MS_KEY, &now_monotonic_ms.to_string())?;
+        if let Some(up) = now_uptime {
+            self.set_setting(LAST_BOOT_UPTIME_MS_KEY, &up.to_string())?;
+        }
 
         let (Some(prev_wall), Some(prev_mono)) = (previous_wall, previous_monotonic) else {
             return Ok(false);
         };
 
         let wall_delta = now_wall_ms - prev_wall;
-        let monotonic_delta = now_monotonic_ms - prev_mono;
-        let drift = (wall_delta - monotonic_delta).abs();
 
-        Ok(wall_delta < 0 || drift > CLOCK_TAMPER_THRESHOLD_MS)
+        // Wall clock went backward — always tampering.
+        if wall_delta < 0 {
+            return Ok(true);
+        }
+
+        // Phase 1: skip mono/wall drift on the first process tick.
+        // LAST_MONOTONIC_MS is process-local (resets to 0 each new process), so the
+        // persisted value from a previous session produces a meaningless delta here.
+        if !is_first_tick {
+            let monotonic_delta = now_monotonic_ms - prev_mono;
+            let drift = (wall_delta - monotonic_delta).abs();
+            if drift > CLOCK_TAMPER_THRESHOLD_MS {
+                return Ok(true);
+            }
+        }
+
+        // Phase 2: wall vs boot-uptime (catches clock advance while app was closed).
+        // Skipped on Windows where GetTickCount64 excludes suspended time, which would
+        // cause false positives after normal sleep/hibernate.
+        if let (Some(prev_up), Some(now_up)) = (previous_uptime, now_uptime) {
+            if now_up < prev_up {
+                // Uptime counter reset → system rebooted; rebaseline without penalizing.
+                return Ok(false);
+            }
+            let uptime_delta = (now_up - prev_up) as i64;
+            if wall_delta > uptime_delta + CLOCK_TAMPER_THRESHOLD_MS {
+                return Ok(true);
+            }
+        }
+
+        Ok(false)
     }
 
     fn handle_clock_tampering(&self, now: i64) -> Result<()> {

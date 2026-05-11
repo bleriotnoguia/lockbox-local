@@ -1,6 +1,6 @@
 [package]
 name = "lockbox-local"
-version = "2.7.0"
+version = "2.7.1"
 description = "A secure, delay-based password and information storage application"
 authors = ["Lockbox Team"]
 license = "MIT"
@@ -30,6 +30,7 @@ pbkdf2 = "0.12"
 hex = "0.4"
 thiserror = "2.0"
 dirs = "5.0"
+sysinfo = { version = "0.31", default-features = false }
 
 [features]
 default = []
