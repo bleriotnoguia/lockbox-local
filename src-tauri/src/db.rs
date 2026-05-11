@@ -147,26 +147,68 @@ impl Database {
         Ok(())
     }
 
-    pub fn new() -> Result<Self> {
+    pub fn new() -> std::result::Result<Self, String> {
         let db_path = Self::get_db_path();
+        let old_db_path = Self::get_old_db_path();
 
         if let Some(parent) = db_path.parent() {
             std::fs::create_dir_all(parent).ok();
         }
 
-        let conn = Connection::open(&db_path)?;
+        // --- MIGRATION CODE ---
+        // If the new DB doesn't exist, but the old one does, rename it
+        if !db_path.exists() && old_db_path.exists() {
+            if let Err(e) = std::fs::rename(&old_db_path, &db_path) {
+                eprintln!("Error renaming DB: {}", e);
+                // Fallback in case rename fails (e.g. cross-device link)
+                if let Err(copy_e) = std::fs::copy(&old_db_path, &db_path) {
+                    // CRITICAL: If both fail (e.g. file locked by old app on Windows), 
+                    // we return an error to show a dialog to the user.
+                    return Err(format!("Impossible de migrer les données.\nL'ancienne version de l'application est probablement ouverte et verrouille les fichiers.\n\nDétail technique: {}", copy_e));
+                } else {
+                    // If copy succeeded, we MUST delete the old file so the old app can't read it anymore
+                    let _ = std::fs::remove_file(&old_db_path);
+                }
+            }
+            
+            // Also migrate SQLite temporary files if they exist to prevent corruption
+            let extensions = ["-journal", "-wal", "-shm"];
+            for ext in extensions {
+                let old_temp = PathBuf::from(format!("{}{}", old_db_path.display(), ext));
+                let new_temp = PathBuf::from(format!("{}{}", db_path.display(), ext));
+                if old_temp.exists() {
+                    if std::fs::rename(&old_temp, &new_temp).is_err() {
+                        if std::fs::copy(&old_temp, &new_temp).is_ok() {
+                            let _ = std::fs::remove_file(&old_temp);
+                        }
+                    }
+                }
+            }
+        }
+        // ----------------------
+
+        let conn = Connection::open(&db_path).map_err(|e| e.to_string())?;
         let db = Database { conn };
-        db.initialize()?;
+        db.initialize().map_err(|e| e.to_string())?;
         Ok(db)
+    }
+
+    fn get_old_db_path() -> PathBuf {
+        if let Some(data_dir) = dirs::data_local_dir() {
+            let app_dir = data_dir.join("com.lockbox.local");
+            app_dir.join("lockbox.db")
+        } else {
+            PathBuf::from("lockbox.db")
+        }
     }
 
     fn get_db_path() -> PathBuf {
         if let Some(data_dir) = dirs::data_local_dir() {
             let app_dir = data_dir.join("com.lockbox.local");
             std::fs::create_dir_all(&app_dir).ok();
-            app_dir.join("lockbox.db")
+            app_dir.join("lockbox_secure.db")
         } else {
-            PathBuf::from("lockbox.db")
+            PathBuf::from("lockbox_secure.db")
         }
     }
 

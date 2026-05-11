@@ -1,4 +1,4 @@
-# Lockbox Local v2.0
+# Lockbox Local v2.7.0
 
 > [🇬🇧 Version anglaise](README.md) | [🇫🇷 Version française](README.fr.md)
 

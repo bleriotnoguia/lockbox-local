@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
+import { isPermissionGranted, requestPermission } from '@tauri-apps/plugin-notification';
 import {
   Header,
   Sidebar,
@@ -7,6 +8,7 @@ import {
   LockboxDetail,
   CreateLockboxModal,
   LoginScreen,
+  SettingsModal,
 } from "./components";
 import { AboutModal } from "./components/AboutModal";
 import { DocModal } from "./components/DocModal";
@@ -23,6 +25,7 @@ export const App: React.FC = () => {
   const [isDocsOpen, setIsDocsOpen] = useState(false);
   const [isStatsOpen, setIsStatsOpen] = useState(false);
   const [isGeneratorOpen, setIsGeneratorOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const { t } = useTranslation();
 
   const {
@@ -40,6 +43,22 @@ export const App: React.FC = () => {
   useEffect(() => {
     if (isAuthenticated) {
       fetchLockboxes();
+      
+      // Request notification permission once at startup
+      const setupNotifications = async () => {
+        try {
+          let granted = await isPermissionGranted();
+          console.log('Notification permission initially:', granted);
+          if (!granted) {
+            const permission = await requestPermission();
+            console.log('Requested permission:', permission);
+            granted = permission === 'granted';
+          }
+        } catch (err) {
+          console.error('Failed to setup notifications:', err);
+        }
+      };
+      setupNotifications();
     }
   }, [isAuthenticated, fetchLockboxes]);
 
@@ -80,6 +99,7 @@ export const App: React.FC = () => {
         onDocsClick={() => setIsDocsOpen(true)}
         onStatsClick={() => setIsStatsOpen(true)}
         onGeneratorClick={() => setIsGeneratorOpen(true)}
+        onSettingsClick={() => setIsSettingsOpen(true)}
       />
 
       <div className="flex flex-1 overflow-hidden">
@@ -133,6 +153,7 @@ export const App: React.FC = () => {
       <DocModal isOpen={isDocsOpen} onClose={() => setIsDocsOpen(false)} />
       <StatsModal isOpen={isStatsOpen} onClose={() => setIsStatsOpen(false)} />
       <PasswordGeneratorModal isOpen={isGeneratorOpen} onClose={() => setIsGeneratorOpen(false)} />
+      <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
 
       <ToastContainer
         position="bottom-right"

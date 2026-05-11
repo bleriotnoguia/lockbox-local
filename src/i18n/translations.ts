@@ -30,7 +30,8 @@ export const translations = {
       passwordDisclaimer: "This password will encrypt all your data locally.",
       passwordWarning: "It cannot be recovered if you forget it.",
       confirmModalTitle: "Save your master password!",
-      confirmModalBody: "This password is the only key to your data. You will also need it to import your lockboxes on another device (mobile, new PC…).",
+      confirmModalBody:
+        "This password is the only key to your data. You will also need it to import your lockboxes on another device (mobile, new PC…).",
       confirmModalCheckbox: "I have saved my password in a safe place",
       confirmModalButton: "Continue",
     },
@@ -48,14 +49,19 @@ export const translations = {
       exportSuccess: "Export successful!",
       importedCount: "{{count}} lockbox(es) imported successfully!",
       importNoneNew: "No new lockboxes imported — all names already exist.",
-      importErrorIntegrity: "Import rejected: the file has been tampered with (HMAC signature invalid). Delays or content may have been modified.",
-      importErrorPassword: "Import failed: wrong source password. The content could not be decrypted.",
-      importErrorFormat: "Import failed: invalid file format. Make sure this is a Lockbox Local export file.",
+      importErrorIntegrity:
+        "Import rejected: the file has been tampered with (HMAC signature invalid). Delays or content may have been modified.",
+      importErrorPassword:
+        "Import failed: wrong source password. The content could not be decrypted.",
+      importErrorFormat:
+        "Import failed: invalid file format. Make sure this is a Lockbox Local export file.",
       importErrorGeneric: "Import failed. Details: {{detail}}",
       exportWarningTitle: "Export successful",
-      exportWarningBody: "Your lockboxes have been exported in encrypted form. If you import this file on another machine or with a different master password, you will be asked for the source password to decrypt and re-encrypt the data.",
+      exportWarningBody:
+        "Your lockboxes have been exported in encrypted form. If you import this file on another machine or with a different master password, you will be asked for the source password to decrypt and re-encrypt the data.",
       importPasswordTitle: "Import from another machine?",
-      importPasswordBody: "If this file was exported from a different machine or with a different master password, enter that password below so the data can be re-encrypted for this device.",
+      importPasswordBody:
+        "If this file was exported from a different machine or with a different master password, enter that password below so the data can be re-encrypted for this device.",
       importPasswordLabel: "Source master password",
       importPasswordPlaceholder: "Leave empty if same machine / same password",
       importPasswordConfirm: "Import",
@@ -121,7 +127,8 @@ export const translations = {
         "Add additional time to the delay. This change is permanent.",
       penaltyInfo: "Penalty mode active: +{{penalty}} added on cancel",
       penaltyBadge: "+{{penalty}} on cancel",
-      penaltyTooltip: "If you cancel an unlock attempt, {{penalty}} will be permanently added to the delay.",
+      penaltyTooltip:
+        "If you cancel an unlock attempt, {{penalty}} will be permanently added to the delay.",
       panicCode: "Emergency access",
       panicCodePlaceholder: "Enter your emergency code",
       panicCodeTooltip: "Single-use emergency code to bypass the delay",
@@ -130,7 +137,8 @@ export const translations = {
       panicCodeSuccess: "Emergency access granted",
       usePanicCode: "Use emergency code",
       resetPanicCode: "Reset emergency code",
-      resetPanicCodeHint: "Enter a new emergency code, or leave blank to remove it entirely.",
+      resetPanicCodeHint:
+        "Enter a new emergency code, or leave blank to remove it entirely.",
       resetPanicCodePlaceholder: "New emergency code (optional)",
       resetPanicCodeConfirm: "Save new code",
       resetPanicCodeSuccess: "Emergency code updated.",
@@ -146,7 +154,8 @@ export const translations = {
       title: "Edit Lockbox",
       saveSuccess: "Lockbox updated successfully!",
       saveError: "Failed to save changes.",
-      blockedByLockState: "Some changes are not allowed while the lockbox is locked.",
+      blockedByLockState:
+        "Some changes are not allowed while the lockbox is locked.",
       availableAfterUnlock: "Available after unlock",
       contentPlaceholder: "Leave empty to keep current content",
       contentHint: "Leave empty to keep the current content unchanged.",
@@ -154,8 +163,10 @@ export const translations = {
       cannotReduceDelay: "Cannot reduce the unlock delay while locked.",
       cannotReduceRelockDelay: "Cannot reduce the relock delay while locked.",
       scheduledMustBeFuture: "The scheduled date must be in the future.",
-      cannotMoveScheduleEarlier: "Cannot move the scheduled unlock to an earlier date.",
-      scheduledPostponeOnly: "You can only push this date further — not remove or move it earlier while locked.",
+      cannotMoveScheduleEarlier:
+        "Cannot move the scheduled unlock to an earlier date.",
+      scheduledPostponeOnly:
+        "You can only push this date further — not remove or move it earlier while locked.",
       changePanicCode: "Change the emergency code",
     },
     lockboxCard: {
@@ -330,7 +341,7 @@ export const translations = {
       buyMeCoffee: "Buy me a coffee",
       crypto: "Crypto donations",
       btcAddress: "Bitcoin (BTC)",
-      adaAddress: "Cardano (ADA)",
+      optimismAddress: "Ethereum (ETH - Optimism Network)",
       solAddress: "Solana (SOL)",
       copiedAddress: "Address copied!",
       license: "License",
@@ -386,6 +397,28 @@ export const translations = {
       warning:
         "This will permanently increase the delay and cannot be reversed.",
     },
+    settings: {
+      title: "Settings",
+      general: "General",
+      data: "Data Management",
+      theme: "Theme",
+      language: "Language",
+      exportData: "Export Lockboxes",
+      exportDesc: "Export all your lockboxes to a secure, encrypted file.",
+      importData: "Import Lockboxes",
+      importDesc: "Import lockboxes from a previously exported file.",
+    },
+    notifications: {
+      unlockedTitle: "Lockbox Unlocked",
+      unlockedBody: '"{{name}}" is now unlocked and accessible.',
+      scheduledTitle: "Scheduled Unlock",
+      scheduledBody: '"{{name}}" is now unlocked.',
+      relockedTitle: "Lockbox Relocked",
+      relockedBody: '"{{name}}" has been automatically relocked.',
+      tamperTitle: "Clock Tamper Detected",
+      tamperBody:
+        "System clock manipulation detected. Active lockboxes have been relocked.",
+    },
   },
   fr: {
     common: {
@@ -417,7 +450,8 @@ export const translations = {
         "Ce mot de passe chiffrera toutes vos données localement.",
       passwordWarning: "Il ne peut pas être récupéré si vous l'oubliez.",
       confirmModalTitle: "Sauvegardez votre mot de passe maître !",
-      confirmModalBody: "Ce mot de passe est la seule clé d'accès à vos données. Vous en aurez également besoin pour importer vos lockboxes sur un autre appareil (mobile, nouveau PC…).",
+      confirmModalBody:
+        "Ce mot de passe est la seule clé d'accès à vos données. Vous en aurez également besoin pour importer vos lockboxes sur un autre appareil (mobile, nouveau PC…).",
       confirmModalCheckbox: "J'ai bien noté mon mot de passe en lieu sûr",
       confirmModalButton: "Continuer",
     },
@@ -434,20 +468,28 @@ export const translations = {
       importSuccess: "Import réussi !",
       exportSuccess: "Export réussi !",
       importedCount: "{{count}} lockbox(es) importée(s) avec succès !",
-      importNoneNew: "Aucune nouvelle lockbox importée — tous les noms existent déjà.",
-      importErrorIntegrity: "Import refusé : le fichier a été modifié (signature HMAC invalide). Des délais ou du contenu ont peut-être été altérés.",
-      importErrorPassword: "Échec de l'import : mot de passe source incorrect. Le contenu n'a pas pu être déchiffré.",
-      importErrorFormat: "Échec de l'import : format de fichier invalide. Assurez-vous que c'est bien un fichier d'export Lockbox Local.",
+      importNoneNew:
+        "Aucune nouvelle lockbox importée — tous les noms existent déjà.",
+      importErrorIntegrity:
+        "Import refusé : le fichier a été modifié (signature HMAC invalide). Des délais ou du contenu ont peut-être été altérés.",
+      importErrorPassword:
+        "Échec de l'import : mot de passe source incorrect. Le contenu n'a pas pu être déchiffré.",
+      importErrorFormat:
+        "Échec de l'import : format de fichier invalide. Assurez-vous que c'est bien un fichier d'export Lockbox Local.",
       importErrorGeneric: "Échec de l'import. Détail : {{detail}}",
       exportWarningTitle: "Export réussi",
-      exportWarningBody: "Vos lockboxes ont été exportées sous forme chiffrée. Si vous importez ce fichier sur une autre machine ou avec un mot de passe maître différent, le mot de passe source vous sera demandé pour déchiffrer et rechiffrer les données.",
+      exportWarningBody:
+        "Vos lockboxes ont été exportées sous forme chiffrée. Si vous importez ce fichier sur une autre machine ou avec un mot de passe maître différent, le mot de passe source vous sera demandé pour déchiffrer et rechiffrer les données.",
       importPasswordTitle: "Import depuis une autre machine ?",
-      importPasswordBody: "Si ce fichier a été exporté depuis une autre machine ou avec un mot de passe maître différent, saisissez ce mot de passe ci-dessous pour que les données soient rechiffrées pour cet appareil.",
+      importPasswordBody:
+        "Si ce fichier a été exporté depuis une autre machine ou avec un mot de passe maître différent, saisissez ce mot de passe ci-dessous pour que les données soient rechiffrées pour cet appareil.",
       importPasswordLabel: "Mot de passe maître source",
-      importPasswordPlaceholder: "Laisser vide si même machine / même mot de passe",
+      importPasswordPlaceholder:
+        "Laisser vide si même machine / même mot de passe",
       importPasswordConfirm: "Importer",
       importPasswordSkip: "Même machine — ignorer",
-      importError: "Échec de l'import. Vérifiez que le mot de passe source est correct.",
+      importError:
+        "Échec de l'import. Vérifiez que le mot de passe source est correct.",
       about: "À propos",
       docs: "Documentation",
       stats: "Statistiques",
@@ -507,7 +549,8 @@ export const translations = {
         "Ajoutez du temps supplémentaire au délai. Cette modification est permanente.",
       penaltyInfo: "Mode pénalité actif : +{{penalty}} ajouté à l'annulation",
       penaltyBadge: "+{{penalty}} à l'annulation",
-      penaltyTooltip: "Si vous annulez une tentative de déverrouillage, {{penalty}} seront ajoutés définitivement au délai.",
+      penaltyTooltip:
+        "Si vous annulez une tentative de déverrouillage, {{penalty}} seront ajoutés définitivement au délai.",
       panicCode: "Accès d'urgence",
       panicCodePlaceholder: "Entrez votre code d'urgence",
       panicCodeTooltip:
@@ -517,7 +560,8 @@ export const translations = {
       panicCodeSuccess: "Accès d'urgence accordé",
       usePanicCode: "Utiliser le code d'urgence",
       resetPanicCode: "Réinitialiser le code d'urgence",
-      resetPanicCodeHint: "Entrez un nouveau code d'urgence, ou laissez vide pour le supprimer.",
+      resetPanicCodeHint:
+        "Entrez un nouveau code d'urgence, ou laissez vide pour le supprimer.",
       resetPanicCodePlaceholder: "Nouveau code d'urgence (optionnel)",
       resetPanicCodeConfirm: "Enregistrer le nouveau code",
       resetPanicCodeSuccess: "Code d'urgence mis à jour.",
@@ -533,16 +577,22 @@ export const translations = {
       title: "Modifier la Lockbox",
       saveSuccess: "Lockbox mise à jour avec succès !",
       saveError: "Impossible d'enregistrer les modifications.",
-      blockedByLockState: "Certaines modifications ne sont pas autorisées pendant que la lockbox est verrouillée.",
+      blockedByLockState:
+        "Certaines modifications ne sont pas autorisées pendant que la lockbox est verrouillée.",
       availableAfterUnlock: "Disponible après déverrouillage",
       contentPlaceholder: "Laisser vide pour conserver le contenu actuel",
       contentHint: "Laisser vide pour ne pas modifier le contenu actuel.",
       canOnlyIncrease: "Peut uniquement être augmenté (lockbox verrouillée)",
-      cannotReduceDelay: "Impossible de réduire le délai de déverrouillage pendant que la lockbox est verrouillée.",
-      cannotReduceRelockDelay: "Impossible de réduire le délai de reverrouillage pendant que la lockbox est verrouillée.",
-      scheduledMustBeFuture: "La date de déverrouillage planifié doit être dans le futur.",
-      cannotMoveScheduleEarlier: "Impossible d'avancer la date de déverrouillage planifié.",
-      scheduledPostponeOnly: "Vous pouvez uniquement repousser cette date — pas la supprimer ni l'avancer tant que la lockbox est verrouillée.",
+      cannotReduceDelay:
+        "Impossible de réduire le délai de déverrouillage pendant que la lockbox est verrouillée.",
+      cannotReduceRelockDelay:
+        "Impossible de réduire le délai de reverrouillage pendant que la lockbox est verrouillée.",
+      scheduledMustBeFuture:
+        "La date de déverrouillage planifié doit être dans le futur.",
+      cannotMoveScheduleEarlier:
+        "Impossible d'avancer la date de déverrouillage planifié.",
+      scheduledPostponeOnly:
+        "Vous pouvez uniquement repousser cette date — pas la supprimer ni l'avancer tant que la lockbox est verrouillée.",
       changePanicCode: "Modifier le code d'urgence",
     },
     lockboxCard: {
@@ -722,7 +772,7 @@ export const translations = {
       buyMeCoffee: "Offrir un café",
       crypto: "Dons en crypto",
       btcAddress: "Bitcoin (BTC)",
-      adaAddress: "Cardano (ADA)",
+      optimismAddress: "Ethereum (ETH - Optimism Network)",
       solAddress: "Solana (SOL)",
       copiedAddress: "Adresse copiée !",
       license: "Licence",
@@ -781,6 +831,30 @@ export const translations = {
       confirm: "Augmenter le délai",
       warning:
         "Cette action augmentera définitivement le délai et ne peut pas être annulée.",
+    },
+    settings: {
+      title: "Paramètres",
+      general: "Général",
+      data: "Gestion des données",
+      theme: "Thème",
+      language: "Langue",
+      exportData: "Exporter les lockboxes",
+      exportDesc:
+        "Exportez toutes vos lockboxes dans un fichier sécurisé et chiffré.",
+      importData: "Importer des lockboxes",
+      importDesc:
+        "Importez des lockboxes depuis un fichier précédemment exporté.",
+    },
+    notifications: {
+      unlockedTitle: "Lockbox Déverrouillée",
+      unlockedBody: '"{{name}}" est maintenant déverrouillée et accessible.',
+      scheduledTitle: "Déverrouillage Planifié",
+      scheduledBody: '"{{name}}" est maintenant déverrouillée.',
+      relockedTitle: "Lockbox Reverrouillée",
+      relockedBody: '"{{name}}" a été automatiquement reverrouillée.',
+      tamperTitle: "Manipulation d'Horloge Détectée",
+      tamperBody:
+        "Une manipulation de l'horloge système a été détectée. Les lockboxes actives ont été reverrouillées.",
     },
   },
 } as const;

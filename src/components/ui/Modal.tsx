@@ -1,16 +1,16 @@
-import React, { useEffect, useCallback } from 'react';
-import { X } from 'lucide-react';
-import { clsx } from 'clsx';
-import { useTranslation } from '../../i18n';
+import React, { useEffect, useCallback } from "react";
+import { X } from "lucide-react";
+import { clsx } from "clsx";
+import { useTranslation } from "../../i18n";
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
   children: React.ReactNode;
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  size?: "sm" | "md" | "lg" | "xl";
   /** Use 'high' when this modal is opened on top of another modal */
-  layer?: 'base' | 'high';
+  layer?: "base" | "high";
 }
 
 export const Modal: React.FC<ModalProps> = ({
@@ -18,43 +18,43 @@ export const Modal: React.FC<ModalProps> = ({
   onClose,
   title,
   children,
-  size = 'md',
-  layer = 'base',
+  size = "md",
+  layer = "base",
 }) => {
   const handleEscape = useCallback(
     (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         onClose();
       }
     },
-    [onClose]
+    [onClose],
   );
 
   useEffect(() => {
     if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'hidden';
+      document.addEventListener("keydown", handleEscape);
+      document.body.style.overflow = "hidden";
     }
 
     return () => {
-      document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'unset';
+      document.removeEventListener("keydown", handleEscape);
+      document.body.style.overflow = "unset";
     };
   }, [isOpen, handleEscape]);
 
   if (!isOpen) return null;
 
   const sizes = {
-    sm: 'max-w-sm',
-    md: 'max-w-md',
-    lg: 'max-w-lg',
-    xl: 'max-w-xl',
+    sm: "max-w-sm",
+    md: "max-w-md",
+    lg: "max-w-xl",
+    xl: "max-w-2xl",
   };
 
-  const zClass = layer === 'high' ? 'z-60' : 'z-50';
+  const zClass = layer === "high" ? "z-60" : "z-50";
 
   return (
-    <div className={clsx('fixed inset-0 overflow-y-auto', zClass)}>
+    <div className={clsx("fixed inset-0 overflow-y-auto", zClass)}>
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-black/50 transition-opacity"
@@ -65,8 +65,8 @@ export const Modal: React.FC<ModalProps> = ({
       <div className="flex min-h-full items-center justify-center p-4">
         <div
           className={clsx(
-            'relative w-full transform rounded-xl bg-white dark:bg-gray-800 p-6 shadow-xl transition-all',
-            sizes[size]
+            "relative w-full transform rounded-xl bg-white dark:bg-gray-800 p-6 shadow-xl transition-all",
+            sizes[size],
           )}
           onClick={(e) => e.stopPropagation()}
         >
@@ -99,7 +99,7 @@ interface ConfirmModalProps {
   message: string;
   confirmText?: string;
   cancelText?: string;
-  variant?: 'danger' | 'warning' | 'info';
+  variant?: "danger" | "warning" | "info";
   isLoading?: boolean;
 }
 
@@ -111,16 +111,16 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   message,
   confirmText,
   cancelText,
-  variant = 'danger',
+  variant = "danger",
   isLoading = false,
 }) => {
   const { t } = useTranslation();
-  const resolvedConfirmText = confirmText ?? t('common.confirm');
-  const resolvedCancelText = cancelText ?? t('common.cancel');
+  const resolvedConfirmText = confirmText ?? t("common.confirm");
+  const resolvedCancelText = cancelText ?? t("common.cancel");
   const variantStyles = {
-    danger: 'bg-red-600 hover:bg-red-700 focus:ring-red-500',
-    warning: 'bg-yellow-600 hover:bg-yellow-700 focus:ring-yellow-500',
-    info: 'bg-primary-600 hover:bg-primary-700 focus:ring-primary-500',
+    danger: "bg-red-600 hover:bg-red-700 focus:ring-red-500",
+    warning: "bg-yellow-600 hover:bg-yellow-700 focus:ring-yellow-500",
+    info: "bg-primary-600 hover:bg-primary-700 focus:ring-primary-500",
   };
 
   return (
@@ -138,11 +138,11 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
           onClick={onConfirm}
           disabled={isLoading}
           className={clsx(
-            'px-4 py-2 text-sm font-medium text-white rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50',
-            variantStyles[variant]
+            "px-4 py-2 text-sm font-medium text-white rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50",
+            variantStyles[variant],
           )}
         >
-          {isLoading ? t('common.loading') : resolvedConfirmText}
+          {isLoading ? t("common.loading") : resolvedConfirmText}
         </button>
       </div>
     </Modal>

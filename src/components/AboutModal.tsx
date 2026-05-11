@@ -10,7 +10,7 @@ interface AboutModalProps {
   onClose: () => void;
 }
 
-const APP_VERSION = "2.5.3";
+const APP_VERSION = "2.7.0";
 const GITHUB_URL = "https://github.com/bleriotnoguia/lockbox-local";
 const BUG_URL = "https://github.com/bleriotnoguia/lockbox-local/issues";
 const BUY_ME_COFFEE_URL = "https://ko-fi.com/bleriotnoguia";
@@ -18,8 +18,7 @@ const X_URL = "https://x.com/bleriotnoguia";
 const SUPPORT_EMAIL = "contact@bleriotnoguia.com";
 
 const BTC_ADDRESS = "bc1qejaecc7mfyg5vklzlp9s0kd4z45t0kycehk4ja";
-const ADA_ADDRESS =
-  "addr1q8mprm9a2kkxkmasjln8lptu682uqawqtyv4u7865wxet6h96p8d77p6pzsh4q74cfl5mmt6mwxksnfasd437h38uxzsntjfe5";
+const OPTIMISM_ADDRESS = "0xC6b00E9D43EA554AB9fc4ae5dB7781f363Fd25F0";
 const SOL_ADDRESS = "DUp9FzfPG2QfWNmWq3rJxed5b41FK92An6d9MpyjLBbC";
 
 interface CopyAddressProps {
@@ -196,8 +195,8 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
                 address={BTC_ADDRESS}
               />
               <CopyAddress
-                label={t("about.adaAddress")}
-                address={ADA_ADDRESS}
+                label={t("about.optimismAddress")}
+                address={OPTIMISM_ADDRESS}
               />
               <CopyAddress
                 label={t("about.solAddress")}
