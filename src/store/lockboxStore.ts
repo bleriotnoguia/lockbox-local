@@ -10,6 +10,8 @@ import type { Lockbox, CreateLockboxInput, AccessLogEntry } from "../types";
 import { parseTags } from "../types";
 import { useLocaleStore } from "../i18n/localeStore";
 import { translations } from "../i18n/translations";
+import { useSettingsStore } from "./settingsStore";
+import { playUnlockedSound, playRelockedSound } from "../utils/notificationSound";
 
 function getTranslation(key: string, vars?: Record<string, string>): string {
   const locale = useLocaleStore.getState().locale;
@@ -355,6 +357,9 @@ export const useLockboxStore = create<LockboxState>((set, get) => ({
             const oldLb = oldLockboxes.find((lb) => lb.id === newLb.id);
             if (!oldLb) continue;
 
+            const { unlockedSoundEnabled, relockedSoundEnabled } =
+              useSettingsStore.getState();
+
             // 1. Unlocked (countdown finished)
             if (
               oldLb.is_locked &&
@@ -368,6 +373,7 @@ export const useLockboxStore = create<LockboxState>((set, get) => ({
                   name: newLb.name,
                 }),
               });
+              if (unlockedSoundEnabled) playUnlockedSound();
             }
             // 2. Scheduled Unlocked
             else if (
@@ -382,6 +388,7 @@ export const useLockboxStore = create<LockboxState>((set, get) => ({
                   name: newLb.name,
                 }),
               });
+              if (unlockedSoundEnabled) playUnlockedSound();
             }
             // 3. Auto-relocked
             else if (
@@ -396,6 +403,7 @@ export const useLockboxStore = create<LockboxState>((set, get) => ({
                   name: newLb.name,
                 }),
               });
+              if (relockedSoundEnabled) playRelockedSound();
             }
             // 4. Tamper detected (was unlocking/scheduled/unlocked, now locked with no timestamps)
             else if (

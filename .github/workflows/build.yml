@@ -12,17 +12,17 @@ jobs:
   build-windows:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
-          node-version: "20"
+          node-version: "22"
       - uses: dtolnay/rust-toolchain@stable
       - name: Install dependencies
         run: npm install
       - name: Build Windows
         run: npm run tauri:build
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: windows-installer
           path: src-tauri/target/release/bundle/msi/*.msi
@@ -30,10 +30,10 @@ jobs:
   build-linux:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
-          node-version: "20"
+          node-version: "22"
       - uses: dtolnay/rust-toolchain@stable
       - name: Install system dependencies
         run: |
@@ -47,12 +47,12 @@ jobs:
       - name: Build Linux
         run: npm run tauri:build
       - name: Upload deb artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: linux-deb
           path: src-tauri/target/release/bundle/deb/*.deb
       - name: Upload AppImage artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: linux-appimage
           path: src-tauri/target/release/bundle/appimage/*.AppImage
@@ -60,17 +60,17 @@ jobs:
   build-macos:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
-          node-version: "20"
+          node-version: "22"
       - uses: dtolnay/rust-toolchain@stable
       - name: Install dependencies
         run: npm install
       - name: Build macOS
         run: npm run tauri:build
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: macos-dmg
           path: src-tauri/target/release/bundle/dmg/*.dmg
@@ -79,10 +79,10 @@ jobs:
     needs: [build-windows, build-linux, build-macos]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Download all artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           path: artifacts
 

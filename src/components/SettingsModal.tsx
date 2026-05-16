@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { Download, Upload, ShieldAlert, Sun, Moon, Monitor, Globe, Database, Settings as SettingsIcon } from 'lucide-react';
+import { Download, Upload, ShieldAlert, Sun, Moon, Monitor, Globe, Database, Settings as SettingsIcon, Bell } from 'lucide-react';
 import { clsx } from 'clsx';
 import { Modal } from './ui/Modal';
 import { Button } from './ui/Button';
-import { useThemeStore } from '../store';
+import { useThemeStore, useSettingsStore } from '../store';
 import { useExportImport } from '../hooks';
 import { useTranslation } from '../i18n';
 
@@ -18,6 +18,12 @@ type Tab = 'general' | 'data';
 export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   const [activeTab, setActiveTab] = useState<Tab>('general');
   const { theme, setTheme } = useThemeStore();
+  const {
+    unlockedSoundEnabled,
+    relockedSoundEnabled,
+    setUnlockedSoundEnabled,
+    setRelockedSoundEnabled,
+  } = useSettingsStore();
   const { t, locale, setLocale } = useTranslation();
   
   const { exportLockboxes, importLockboxes, isExporting, isImporting, error: importError, clearError } = useExportImport();
@@ -168,6 +174,68 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
                       Français
                     </button>
                   </div>
+                </div>
+
+                {/* Notifications */}
+                <div className="space-y-3">
+                  <h3 className="text-sm font-medium text-gray-900 dark:text-white flex items-center gap-2">
+                    <Bell className="w-4 h-4 text-gray-500" />
+                    {t('settings.notifications') || 'Notifications'}
+                  </h3>
+                  <label className="flex items-start justify-between gap-4 cursor-pointer">
+                    <div className="flex-1">
+                      <div className="text-sm text-gray-900 dark:text-white">
+                        {t('settings.unlockedSound') || 'Sound on unlock'}
+                      </div>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                        {t('settings.unlockedSoundDesc') || 'Play a sound when a lockbox is unlocked.'}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={unlockedSoundEnabled}
+                      onClick={() => setUnlockedSoundEnabled(!unlockedSoundEnabled)}
+                      className={clsx(
+                        'relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800',
+                        unlockedSoundEnabled ? 'bg-primary-600' : 'bg-gray-300 dark:bg-gray-600'
+                      )}
+                    >
+                      <span
+                        className={clsx(
+                          'inline-block h-4 w-4 transform rounded-full bg-white transition-transform',
+                          unlockedSoundEnabled ? 'translate-x-6' : 'translate-x-1'
+                        )}
+                      />
+                    </button>
+                  </label>
+                  <label className="flex items-start justify-between gap-4 cursor-pointer">
+                    <div className="flex-1">
+                      <div className="text-sm text-gray-900 dark:text-white">
+                        {t('settings.relockedSound') || 'Sound on relock'}
+                      </div>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                        {t('settings.relockedSoundDesc') || 'Play a sound when a lockbox is automatically relocked.'}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={relockedSoundEnabled}
+                      onClick={() => setRelockedSoundEnabled(!relockedSoundEnabled)}
+                      className={clsx(
+                        'relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800',
+                        relockedSoundEnabled ? 'bg-primary-600' : 'bg-gray-300 dark:bg-gray-600'
+                      )}
+                    >
+                      <span
+                        className={clsx(
+                          'inline-block h-4 w-4 transform rounded-full bg-white transition-transform',
+                          relockedSoundEnabled ? 'translate-x-6' : 'translate-x-1'
+                        )}
+                      />
+                    </button>
+                  </label>
                 </div>
               </>
             )}
